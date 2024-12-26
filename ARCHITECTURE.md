@@ -1,19 +1,31 @@
 # **Application Architecture Documentation**
 
 ## **1. Overview**
+
 This document outlines the technical architecture of the application, detailing the backend, frontend, database, messaging system, and other services used to power the system. The primary goal is to ensure an efficient and scalable system that can manage multiple users (patients, therapists, supervisors) and provide them with seamless access to the features of the application.
+
+![IMAGE](./ARCH.png)
 
 ## **2. Technology Stack**
 
 ### **2.1 Frontend**
+
 - **Next.js**
+
 ### **2.2 Backend**
+
 - **Nest.js**
+
 ### **2.3 Database**
+
 - **PostgreSQL**
+
 ### **2.4 Caching & Session Management**
+
 - **Redis**
+
 ### **2.5 Messaging & Notifications**
+
 - **AWS SNS (Simple Notification Service)**
 
 ## **3. Application Flow**
