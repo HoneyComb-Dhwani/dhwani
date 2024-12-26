@@ -1,0 +1,51 @@
+services:
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack-main}"
+    image: localstack/localstack:latest
+    ports:
+      - "127.0.0.1:4566:4566"
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - SERVICES=s3,sns
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+  
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - cache:/data
+
+  frontend:
+    image: dhwani_f
+    restart: always
+    ports:
+      - "3000:3000"
+  backend:
+    image: dhwani_b
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - cache
+    environment:
+      - DATABASE_URL=postgresql://postgres:example@db:5432/postgres
+      - CACHE_URL=redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81@cache:6379/0
+
+volumes:
+  db_data:
+  cache:
