@@ -29,6 +29,23 @@ services:
     volumes: 
       - cache:/data
 
+  frontend:
+    image: dhwani_f
+    restart: always
+    ports:
+      - "3000:3000"
+  backend:
+    image: dhwani_b
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - cache
+    environment:
+      - DATABASE_URL=postgresql://postgres:example@db:5432/postgres
+      - CACHE_URL=redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81@cache:6379/0
+
 volumes:
   db_data:
   cache:
