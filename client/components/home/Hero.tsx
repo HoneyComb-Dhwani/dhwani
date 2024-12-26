@@ -11,7 +11,7 @@ const Hero: React.FC = () => {
                         <span className="block text-blue-600">Healthcare Journey</span>
                     </h1>
                     <p className="mt-6 text-lg text-gray-500 md:text-xl">
-                        Schedule sessions, track progress, and manage your healthcare experience all in one place. Join users who've simplified their medical journey.
+                        Schedule sessions, track progress, and manage your healthcare experience all in one place. Join users who&apos;ve simplified their medical journey.
                     </p>
                     <div className="mt-8">
                         <Link href="/register" className="inline-block rounded-lg shadow-lg px-8 py-4 bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors">

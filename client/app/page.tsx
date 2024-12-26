@@ -1,7 +1,6 @@
 import Footer from "@/components/common/Footer";
 import Bento from "@/components/home/Bento";
 import Hero from "@/components/home/Hero";
-import Image from "next/image";
 
 const Home: React.FC = () => {
   return (

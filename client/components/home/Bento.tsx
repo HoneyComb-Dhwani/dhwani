@@ -7,7 +7,7 @@ const Bento: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                        Dhwani's features
+                        Dhwani&apos;s features
                     </h2>
                     <p className="mt-4 text-xl text-gray-600">
                         Streamlined solutions for healthcare professionals and patients alike
