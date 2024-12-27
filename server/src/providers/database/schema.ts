@@ -105,7 +105,7 @@ export const hospitals = pgTable("hospitals", {
     isDeleted: boolean('is_deleted').notNull().default(false)
 })
 
-export const supervisors = pgTable("patients", {
+export const supervisors = pgTable("supervisors", {
     id: ulidType("id", {
         primaryKey: true,
         default: ulid
@@ -127,7 +127,7 @@ export const supervisors = pgTable("patients", {
     isDeleted: boolean('is_deleted').notNull().default(false),
 })
 
-export const therapists = pgTable("patients", {
+export const therapists = pgTable("therapists", {
     id: ulidType("id", {
         primaryKey: true,
         default: ulid
@@ -180,7 +180,7 @@ export const patients = pgTable("patients", {
     isDeleted: boolean('is_deleted').notNull().default(false),
 })
 
-export const consultations = pgTable("patients", {
+export const consultations = pgTable("consultations", {
     id: ulidType("id", {
         primaryKey: true,
         default: ulid
@@ -196,7 +196,7 @@ export const consultations = pgTable("patients", {
     isDeleted: boolean('is_deleted').notNull().default(false),
 })
 
-export const sessions = pgTable("patients", {
+export const sessions = pgTable("sessions", {
     id: ulidType("id", {
         primaryKey: true,
         default: ulid
