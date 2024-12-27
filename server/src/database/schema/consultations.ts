@@ -1,14 +1,11 @@
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { ulidType } from "../types";
-import { ulid } from "ulid";
+import { ULID, ulid } from "ulid";
 import { patients } from "./patients";
 import { therapists } from "./therapists";
 
 export const consultations = pgTable("consultations", {
-    id: ulidType("id", {
-        primaryKey: true,
-        default: ulid
-    }).primaryKey(),
+    id: ulidType("id").primaryKey().$defaultFn(() => ulid() as unknown as ULID),
     patientId: ulidType("patient_id", { foreignKey: true }).references(() => patients.id),
     therapistId: ulidType("therapist_id", { foreignKey: true }).references(() => therapists.id),
     diagnosis: text("diagnosis").notNull(),

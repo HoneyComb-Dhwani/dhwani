@@ -1,12 +1,9 @@
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { ulidType } from "../types";
-import { ulid } from "ulid";
+import { ULID, ulid } from "ulid";
 
 export const addresses = pgTable("addresses", {
-    id: ulidType("id", {
-        primaryKey: true,
-        default: ulid
-    }).primaryKey(),
+    id: ulidType("id").primaryKey().$defaultFn(() => ulid() as unknown as ULID),
     houseNumber: text("house_number"),
     blockNumber: text("block_number"),
     street: text("street"),
