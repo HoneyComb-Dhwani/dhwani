@@ -1,5 +1,5 @@
 import { Module, Global } from '@nestjs/common';
-import { createClient, RedisClientType } from 'redis';
+import { createClient, type RedisClientType } from 'redis';
 import { env } from 'src/config';
 
 @Global()
