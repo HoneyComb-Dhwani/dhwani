@@ -1,5 +1,5 @@
 import { db } from '../db';
-import { sessions } from '../schema/sessions';
+import { sessions, therapists, patients } from '../schema';
 import { and, eq, sql } from 'drizzle-orm';
 import type { Session } from '../types';
 import { ULID } from 'ulid';
@@ -12,21 +12,31 @@ export class SessionRepository {
         return session;
     }
 
-    async fetchAllSessions(): Promise<Session[]> {
-        return db.select().from(sessions).where(eq(sessions.isDeleted, false));
+    async fetchAllSessions() {
+        const result = db
+        .select()
+        .from(sessions)
+        .leftJoin(therapists, eq(sessions.therapistId, therapists.id))
+        .leftJoin(patients, eq(sessions.patientId, patients.id))
+        .where(eq(sessions.isDeleted, false))
+        .execute();
+        return result ?? null;
     }
-
-    async fetchSessionById(id: ULID): Promise<Session | null> {
-        const [session] = await db
-            .select()
-            .from(sessions)
-            .where(
-                and(
-                    eq(sessions.id, id),
-                    eq(sessions.isDeleted, false)
-                )
-            );
-        return session ?? null;
+    
+    async fetchSessionById(id: ULID) {
+        const result = db
+        .select()
+        .from(sessions)
+        .leftJoin(therapists, eq(sessions.therapistId, therapists.id))
+        .leftJoin(patients, eq(sessions.patientId, patients.id))
+        .where(
+            and(
+                eq(sessions.id, id),
+                eq(sessions.isDeleted, false)
+            )
+        )
+        .execute();
+        return result ?? null;    
     }
 
     async updateSession(id: ULID, updatedData: Partial<Omit<Session, 'id'>>): Promise<Session | null> {

@@ -1,5 +1,5 @@
 import {db} from '../db';
-import {consultations} from '../schema/consultations';
+import {consultations, therapists, patients} from '../schema';
 import {and, eq, sql} from 'drizzle-orm';
 import type {Consultation} from '../types';
 import {ULID} from 'ulid';
@@ -10,14 +10,21 @@ export class ConsultationsRepository {
         return consultation;
     }
 
-    async fetchAllConsultations(): Promise<Consultation[]> {
-        return db.select().from(consultations).where(eq(consultations.isDeleted, false));
+    
+    async fetchAllConsultations() {
+        const result = db.select().from(consultations)
+            .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
+            .leftJoin(patients, eq(consultations.patientId, patients.id))
+            .where(eq(consultations.isDeleted, false));
+        return result ?? null;
     }
 
-    async fetchConsultationById(id: ULID): Promise<Consultation | null> {
-        const [consultation] = await db
+    async fetchConsultationById(id: ULID) {
+        const consultation = await db
             .select()
             .from(consultations)
+            .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
+            .leftJoin(patients, eq(consultations.patientId, patients.id))
             .where(
                 and(
                     eq(consultations.id, id),
@@ -26,6 +33,7 @@ export class ConsultationsRepository {
             );
         return consultation ?? null;
     }
+    
 
     async updateConsultation(id: ULID, updatedData: Partial<Omit<Consultation, 'id'>>): Promise<Consultation | null> {
         const [consultation] = await db
