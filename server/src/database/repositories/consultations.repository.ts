@@ -2,7 +2,7 @@ import {db} from '../db';
 import {consultations, therapists, patients} from '../schema';
 import {and, eq, sql} from 'drizzle-orm';
 import type {Consultation} from '../types';
-import {ULID} from 'ulid';
+import { ULID } from 'ulid';
 
 export class ConsultationsRepository {
     async createConsultation(consultationData: Consultation): Promise<Consultation> {
