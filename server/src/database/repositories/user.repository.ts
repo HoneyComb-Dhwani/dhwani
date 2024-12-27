@@ -32,7 +32,7 @@ export class UserRepository {
 
   async updateUser(
     id: ULID,
-    updatedData: Partial<Omit<NewUser, 'id'>>,
+    updatedData: NewUser,
   ): Promise<User | null> {
     const [user] = await db
       .update(users)

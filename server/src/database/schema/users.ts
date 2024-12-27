@@ -7,7 +7,7 @@ export const users = pgTable('users', {
     .primaryKey()
     .$defaultFn(() => ulid() as unknown as ULID),
   name: text('name').notNull(),
-  email: text('email').notNull(),
+  email: text('email').notNull().unique(),
   hashPassword: text('hash_password').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),

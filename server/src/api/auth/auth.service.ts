@@ -14,6 +14,12 @@ export class AuthService {
 
   async register(body: RegisterDto): Promise<ReturnResponse | ReturnError> {
     const { name, email, password } = body;
+
+    const userExists = await userRepository.fetchUserByEmail(email);
+    if (userExists) {
+      return errors.CONFLICT;
+    }
+
     const hashedPassword = await hashPassword(password);
     const user = await userRepository.insertUser({
       name,

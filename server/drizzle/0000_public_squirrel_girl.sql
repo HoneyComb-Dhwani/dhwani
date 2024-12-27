@@ -48,7 +48,8 @@ CREATE TABLE "users" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp,
-	"is_deleted" boolean DEFAULT false NOT NULL
+	"is_deleted" boolean DEFAULT false NOT NULL,
+	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 CREATE TABLE "roles" (
