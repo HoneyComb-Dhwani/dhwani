@@ -1,12 +1,18 @@
-import { Injectable } from "@nestjs/common";
+import type { RedisClientType } from "redis";
+import { Inject, Injectable } from "@nestjs/common";
 import { comparePassword, hashPassword, signJwt } from "./utils";
 import { RegisterDto, LoginDto } from "./dto";
 import { errors, ReturnError, ReturnResponse } from "../constants";
 import { userRepository } from "src/database/repositories/user.repository";
+import { User } from "src/database";
 
 @Injectable()
 
 export class AuthService {
+
+    constructor(
+        @Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType
+    ) { }
 
     async register(body: RegisterDto): Promise<ReturnResponse | ReturnError> {
         const { name, email, password } = body;
@@ -30,16 +36,31 @@ export class AuthService {
 
     async login(body: LoginDto): Promise<ReturnResponse | ReturnError> {
         const { email, password } = body;
-        const user = await userRepository.fetchUserByEmail(email)
 
-        if (!user || user.email !== email) {
-            return errors.INVALID_CREDENTIALS;
-        }
+        let user: User
+        const getUserFromCache = await this.redisClient.get(`user:${email}`);
 
-        const isValidPassword = await comparePassword(password, user.hashPassword);
+        if (getUserFromCache) {
+            user = JSON.parse(getUserFromCache) as User
+        } else {
+            user = await userRepository.fetchUserByEmail(email)
 
-        if (!isValidPassword) {
-            return errors.INVALID_CREDENTIALS;
+            if (!user || user.email !== email) {
+                return errors.INVALID_CREDENTIALS;
+            }
+
+
+            const isValidPassword = await comparePassword(password, user.hashPassword);
+
+            if (!isValidPassword) {
+                return errors.INVALID_CREDENTIALS;
+            }
+
+            await this.redisClient.setEx(
+                `user:${email}`,
+                3600,
+                JSON.stringify(user)
+            );
         }
 
         const token = signJwt(user.id)
