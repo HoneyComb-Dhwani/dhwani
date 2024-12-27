@@ -2,7 +2,7 @@ import { db } from '../db';
 import { users } from '../schema/users';
 import { and, eq, sql } from 'drizzle-orm';
 import type { NewUser, User } from '../types';
-import { ULID } from 'ulid';
+import type { ULID } from 'ulid';
 
 export class UserRepository {
   async insertUser(userData: NewUser): Promise<User> {

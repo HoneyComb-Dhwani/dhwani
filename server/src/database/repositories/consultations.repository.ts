@@ -1,8 +1,8 @@
-import {db} from '../db';
-import {consultations, therapists, patients} from '../schema';
-import {and, eq, sql} from 'drizzle-orm';
-import type {Consultation} from '../types';
-import { ULID } from 'ulid';
+import { db } from '../db';
+import { consultations, therapists, patients } from '../schema';
+import { and, eq, sql } from 'drizzle-orm';
+import type { Consultation } from '../types';
+import type { ULID } from 'ulid';
 
 export class ConsultationsRepository {
     async createConsultation(consultationData: Consultation): Promise<Consultation> {
@@ -10,7 +10,7 @@ export class ConsultationsRepository {
         return consultation;
     }
 
-    
+
     async fetchAllConsultations() {
         const result = db.select().from(consultations)
             .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
@@ -33,7 +33,7 @@ export class ConsultationsRepository {
             );
         return consultation ?? null;
     }
-    
+
 
     async updateConsultation(id: ULID, updatedData: Partial<Omit<Consultation, 'id'>>): Promise<Consultation | null> {
         const [consultation] = await db

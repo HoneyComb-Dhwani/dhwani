@@ -2,7 +2,7 @@ import { db } from '../db';
 import { sessions, therapists, patients } from '../schema';
 import { and, eq, sql } from 'drizzle-orm';
 import type { Session } from '../types';
-import { ULID } from 'ulid';
+import type { ULID } from 'ulid';
 
 
 export class SessionRepository {

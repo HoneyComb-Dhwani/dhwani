@@ -2,7 +2,7 @@ import { db } from '../db';
 import { therapists } from '../schema/therapists';
 import { and, eq, sql } from 'drizzle-orm';
 import type { NewTherapist, Therapist } from '../types';
-import { ULID } from 'ulid';
+import type { ULID } from 'ulid';
 
 export class TherapistRepository {
   async insertTherapist(therapistData: NewTherapist): Promise<Therapist> {

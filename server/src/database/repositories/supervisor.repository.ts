@@ -2,7 +2,7 @@ import { db } from '../db';
 import { supervisors } from '../schema/supervisors';
 import { and, eq, sql } from 'drizzle-orm';
 import type { NewSupervisor, Supervisor } from '../types';
-import { ULID } from 'ulid';
+import type { ULID } from 'ulid';
 
 export class SupervisorRepository {
 
