@@ -8,7 +8,7 @@ export const supervisors = pgTable("supervisors", {
     id: ulidType("id", {
         primaryKey: true,
         default: ulid
-    }),
+    }).primaryKey(),
     userId: ulidType("user_id", {
         primaryKey: false,
         default: ulid,

@@ -8,7 +8,7 @@ export const consultations = pgTable("consultations", {
     id: ulidType("id", {
         primaryKey: true,
         default: ulid
-    }),
+    }).primaryKey(),
     patientId: ulidType("patient_id", { foreignKey: true }).references(() => patients.id),
     therapistId: ulidType("therapist_id", { foreignKey: true }).references(() => therapists.id),
     diagnosis: text("diagnosis").notNull(),

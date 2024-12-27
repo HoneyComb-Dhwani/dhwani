@@ -7,7 +7,7 @@ export const roles = pgTable("roles", {
     id: ulidType("id", {
         primaryKey: true,
         default: ulid
-    }),
+    }).primaryKey(),
     type: roleEnums("type").notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),

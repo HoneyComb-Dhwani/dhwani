@@ -6,7 +6,7 @@ export const addresses = pgTable("addresses", {
     id: ulidType("id", {
         primaryKey: true,
         default: ulid
-    }),
+    }).primaryKey(),
     houseNumber: text("house_number"),
     blockNumber: text("block_number"),
     street: text("street"),

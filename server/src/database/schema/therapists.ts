@@ -7,7 +7,7 @@ export const therapists = pgTable("therapists", {
     id: ulidType("id", {
         primaryKey: true,
         default: ulid
-    }),
+    }).primaryKey(),
     userId: ulidType("user_id", {
         primaryKey: false,
         default: ulid,

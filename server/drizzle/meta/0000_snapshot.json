@@ -1,5 +1,5 @@
 {
-  "id": "4a42f9b9-9da9-4320-b75d-40ba1f0f0b45",
+  "id": "c131768e-8113-4b66-90b5-11e923fdde1d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -11,8 +11,8 @@
         "id": {
           "name": "id",
           "type": "char(26)",
-          "primaryKey": false,
-          "notNull": false
+          "primaryKey": true,
+          "notNull": true
         },
         "house_number": {
           "name": "house_number",
@@ -99,8 +99,8 @@
         "id": {
           "name": "id",
           "type": "char(26)",
-          "primaryKey": false,
-          "notNull": false
+          "primaryKey": true,
+          "notNull": true
         },
         "patient_id": {
           "name": "patient_id",
@@ -202,8 +202,8 @@
         "id": {
           "name": "id",
           "type": "char(26)",
-          "primaryKey": false,
-          "notNull": false
+          "primaryKey": true,
+          "notNull": true
         },
         "name": {
           "name": "name",
@@ -286,8 +286,8 @@
         "id": {
           "name": "id",
           "type": "char(26)",
-          "primaryKey": false,
-          "notNull": false
+          "primaryKey": true,
+          "notNull": true
         },
         "name": {
           "name": "name",
@@ -350,8 +350,8 @@
         "id": {
           "name": "id",
           "type": "char(26)",
-          "primaryKey": false,
-          "notNull": false
+          "primaryKey": true,
+          "notNull": true
         },
         "type": {
           "name": "type",
@@ -403,8 +403,8 @@
         "id": {
           "name": "id",
           "type": "char(26)",
-          "primaryKey": false,
-          "notNull": false
+          "primaryKey": true,
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
@@ -551,8 +551,8 @@
         "id": {
           "name": "id",
           "type": "char(26)",
-          "primaryKey": false,
-          "notNull": false
+          "primaryKey": true,
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
@@ -629,8 +629,8 @@
         "id": {
           "name": "id",
           "type": "char(26)",
-          "primaryKey": false,
-          "notNull": false
+          "primaryKey": true,
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
@@ -721,8 +721,8 @@
         "id": {
           "name": "id",
           "type": "char(26)",
-          "primaryKey": false,
-          "notNull": false
+          "primaryKey": true,
+          "notNull": true
         },
         "patient_id": {
           "name": "patient_id",
@@ -837,8 +837,8 @@
         "id": {
           "name": "id",
           "type": "char(26)",
-          "primaryKey": false,
-          "notNull": false
+          "primaryKey": true,
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",

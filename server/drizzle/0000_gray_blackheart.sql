@@ -1,7 +1,7 @@
 CREATE TYPE "public"."roleEnums" AS ENUM('user', 'therapist', 'supervisor', 'admin');--> statement-breakpoint
 CREATE TYPE "public"."genderEnum" AS ENUM('Male', 'Female', 'Other');--> statement-breakpoint
 CREATE TABLE "addresses" (
-	"id" char(26),
+	"id" char(26) PRIMARY KEY NOT NULL,
 	"house_number" text,
 	"block_number" text,
 	"street" text,
@@ -16,7 +16,7 @@ CREATE TABLE "addresses" (
 );
 --> statement-breakpoint
 CREATE TABLE "consultations" (
-	"id" char(26),
+	"id" char(26) PRIMARY KEY NOT NULL,
 	"patient_id" char(26),
 	"therapist_id" char(26),
 	"diagnosis" text NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE "consultations" (
 );
 --> statement-breakpoint
 CREATE TABLE "hospitals" (
-	"id" char(26),
+	"id" char(26) PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"address_id" char(26),
 	"phone_number" integer NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE "hospitals" (
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
-	"id" char(26),
+	"id" char(26) PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"email" text NOT NULL,
 	"hash_password" text NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE "users" (
 );
 --> statement-breakpoint
 CREATE TABLE "roles" (
-	"id" char(26),
+	"id" char(26) PRIMARY KEY NOT NULL,
 	"type" "roleEnums" NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE "roles" (
 );
 --> statement-breakpoint
 CREATE TABLE "patients" (
-	"id" char(26),
+	"id" char(26) PRIMARY KEY NOT NULL,
 	"user_id" char(26),
 	"first_name" text NOT NULL,
 	"middle_name" text,
@@ -81,7 +81,7 @@ CREATE TABLE "patients" (
 );
 --> statement-breakpoint
 CREATE TABLE "therapists" (
-	"id" char(26),
+	"id" char(26) PRIMARY KEY NOT NULL,
 	"user_id" char(26),
 	"user_code" text NOT NULL,
 	"hospital_id" char(26),
@@ -92,7 +92,7 @@ CREATE TABLE "therapists" (
 );
 --> statement-breakpoint
 CREATE TABLE "supervisors" (
-	"id" char(26),
+	"id" char(26) PRIMARY KEY NOT NULL,
 	"user_id" char(26),
 	"user_code" text DEFAULT 'supervisor' NOT NULL,
 	"hospital_id" char(26),
@@ -103,7 +103,7 @@ CREATE TABLE "supervisors" (
 );
 --> statement-breakpoint
 CREATE TABLE "sessions" (
-	"id" char(26),
+	"id" char(26) PRIMARY KEY NOT NULL,
 	"patient_id" char(26),
 	"therapist_id" char(26),
 	"consultation_id" char(26),
@@ -116,7 +116,7 @@ CREATE TABLE "sessions" (
 );
 --> statement-breakpoint
 CREATE TABLE "userRoles" (
-	"id" char(26),
+	"id" char(26) PRIMARY KEY NOT NULL,
 	"user_id" char(26),
 	"role_id" char(26),
 	"created_at" timestamp DEFAULT now() NOT NULL,

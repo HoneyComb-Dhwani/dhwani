@@ -7,7 +7,7 @@ export const hospitals = pgTable("hospitals", {
     id: ulidType("id", {
         primaryKey: true,
         default: ulid
-    }),
+    }).primaryKey(),
     name: text("name").notNull(),
     addressId: ulidType("address_id", {
         primaryKey: false,

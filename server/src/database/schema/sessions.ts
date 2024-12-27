@@ -9,7 +9,7 @@ export const sessions = pgTable("sessions", {
     id: ulidType("id", {
         primaryKey: true,
         default: ulid
-    }),
+    }).primaryKey(),
     patientId: ulidType("patient_id", { foreignKey: true }).references(() => patients.id),
     therapistId: ulidType("therapist_id", { foreignKey: true }).references(() => therapists.id),
     consultationId: ulidType("consultation_id", { foreignKey: true }).references(() => consultations.id),
