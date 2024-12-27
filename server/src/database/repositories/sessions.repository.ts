@@ -59,3 +59,5 @@ export class SessionRepository {
         return result.rowCount === 1;
     }
 }
+
+export const sessionRepository = new SessionRepository();
