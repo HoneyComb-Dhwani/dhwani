@@ -14,7 +14,7 @@ if (!process.env.REDIS_URL) {
   throw new Error('REDIS_URL is not set');
 }
 
-if(!process.env.JWT_SECRET) {
+if (!process.env.JWT_SECRET) {
   throw new Error('JWT_SECRET is not set');
 }
 

@@ -20,5 +20,4 @@ import { env } from 'src/config';
   ],
   exports: ['SNS_CLIENT'],
 })
-
 export class SnsModule {}

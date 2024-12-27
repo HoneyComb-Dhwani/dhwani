@@ -9,7 +9,7 @@ import { env } from 'src/config';
       provide: 'REDIS_CLIENT',
       useFactory: async (): Promise<RedisClientType> => {
         const redisClient: RedisClientType = createClient({
-          url: env.redisUrl
+          url: env.redisUrl,
         });
 
         redisClient.on('connect', () => {
@@ -27,5 +27,4 @@ import { env } from 'src/config';
   ],
   exports: ['REDIS_CLIENT'],
 })
-
 export class RedisModule {}

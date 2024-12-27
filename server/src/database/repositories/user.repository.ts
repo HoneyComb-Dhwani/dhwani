@@ -18,12 +18,7 @@ export class UserRepository {
     const [user] = await db
       .select()
       .from(users)
-      .where(
-        and(
-          eq(users.id, id),
-          eq(users.isDeleted, false)
-        )
-      );
+      .where(and(eq(users.id, id), eq(users.isDeleted, false)));
     return user ?? null;
   }
 
@@ -31,28 +26,21 @@ export class UserRepository {
     const [user] = await db
       .select()
       .from(users)
-      .where(
-        and(
-          eq(users.email, email),
-          eq(users.isDeleted, false)
-        )
-      );
+      .where(and(eq(users.email, email), eq(users.isDeleted, false)));
     return user ?? null;
   }
 
-  async updateUser(id: ULID, updatedData: Partial<Omit<NewUser, 'id'>>): Promise<User | null> {
+  async updateUser(
+    id: ULID,
+    updatedData: Partial<Omit<NewUser, 'id'>>,
+  ): Promise<User | null> {
     const [user] = await db
       .update(users)
-      .set({ 
+      .set({
         ...updatedData,
-        [users.updatedAt.name]: sql`NOW()`
+        [users.updatedAt.name]: sql`NOW()`,
       })
-      .where(
-        and(
-          eq(users.id, id),
-          eq(users.isDeleted, false)
-        )
-      )
+      .where(and(eq(users.id, id), eq(users.isDeleted, false)))
       .returning();
     return user ?? null;
   }
@@ -60,17 +48,12 @@ export class UserRepository {
   async deleteUser(id: ULID): Promise<boolean> {
     const result = await db
       .update(users)
-      .set({ 
-        [users.isDeleted.name]: true, 
+      .set({
+        [users.isDeleted.name]: true,
         [users.deletedAt.name]: sql`NOW()`,
-        [users.updatedAt.name]: sql`NOW()`
+        [users.updatedAt.name]: sql`NOW()`,
       })
-      .where(
-        and(
-          eq(users.id, id),
-          eq(users.isDeleted, false)
-        )
-      )
+      .where(and(eq(users.id, id), eq(users.isDeleted, false)))
       .returning();
     return result.length > 0;
   }
