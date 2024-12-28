@@ -64,8 +64,7 @@ export class SupervisorService {
     return {
       status: 200,
       message: 'OK',
-      prettyMessage: 'Supervisor updated successfully',
-      data: updatedSupervisor,
+      prettyMessage: 'Supervisor updated successfully'
     };
   }
 
