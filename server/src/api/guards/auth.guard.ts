@@ -38,13 +38,13 @@ export class AuthGuard implements CanActivate {
 
       let user: User;
       const getUserFromCache = await this.redisClient.get(
-        `user:${decoded.userId}`,
+        `user:${decoded.payload.userId}`,
       );
 
-      if (user) {
+      if (getUserFromCache) {
         user = JSON.parse(getUserFromCache) as User;
       } else {
-        user = await userRepository.fetchUserById(decoded.userId);
+        user = await userRepository.fetchUserById(decoded.payload.userId);
 
         if (!user) {
           throw new NotFoundException(errors.NOT_FOUND);

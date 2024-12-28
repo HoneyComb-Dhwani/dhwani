@@ -1,5 +1,5 @@
 import { db } from '../db';
-import { therapists } from '../schema/therapists';
+import { therapists, hospitals } from '../schema/'
 import { and, eq, sql } from 'drizzle-orm';
 import type { NewTherapist, Therapist } from '../types';
 import type { ULID } from 'ulid';
@@ -40,12 +40,26 @@ export class TherapistRepository {
     return therapist ?? null;
   }
 
-  async fetchTherapistByUserCode(userCode: string): Promise<Therapist | null> {
+  async fetchTherapistByUserAndHospitalCode(userCode: string, hospitalCode: string): Promise<Therapist | null> {
     const [therapist] = await db
-      .select()
+      .select({
+        id: therapists.id,
+        userId: therapists.userId,
+        userCode: therapists.userCode,
+        hospitalId: therapists.hospitalId,
+        createdAt: therapists.createdAt,
+        updatedAt: therapists.updatedAt,
+        deletedAt: therapists.deletedAt,
+        isDeleted: therapists.isDeleted,
+      })
       .from(therapists)
+      .innerJoin(hospitals, eq(therapists.hospitalId, hospitals.id))
       .where(
-        and(eq(therapists.userCode, userCode), eq(therapists.isDeleted, false)),
+        and(
+        eq(therapists.userCode, userCode),
+        eq(hospitals.code, hospitalCode),
+        eq(therapists.isDeleted, false),
+        ),
       );
     return therapist ?? null;
   }

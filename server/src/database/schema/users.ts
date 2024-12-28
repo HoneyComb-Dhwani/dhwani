@@ -1,6 +1,8 @@
-import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { boolean, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 import { ulidType } from '../types';
 import { ULID, ulid } from 'ulid';
+
+export const roleEnums = pgEnum("roleEnums", ["USER", "THERAPIST", "SUPERVISOR", "ADMIN"])
 
 export const users = pgTable('users', {
   id: ulidType('id')
@@ -9,6 +11,7 @@ export const users = pgTable('users', {
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
   hashPassword: text('hash_password').notNull(),
+  role: roleEnums('role').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   deletedAt: timestamp('deleted_at'),

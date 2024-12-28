@@ -1,4 +1,4 @@
-CREATE TYPE "public"."roleEnums" AS ENUM('user', 'therapist', 'supervisor', 'admin');--> statement-breakpoint
+CREATE TYPE "public"."roleEnums" AS ENUM('USER', 'THERAPIST', 'SUPERVISOR', 'ADMIN');--> statement-breakpoint
 CREATE TYPE "public"."genderEnum" AS ENUM('Male', 'Female', 'Other');--> statement-breakpoint
 CREATE TABLE "addresses" (
 	"id" char(26) PRIMARY KEY NOT NULL,
@@ -45,20 +45,12 @@ CREATE TABLE "users" (
 	"name" text NOT NULL,
 	"email" text NOT NULL,
 	"hash_password" text NOT NULL,
+	"role" "roleEnums" NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp,
 	"is_deleted" boolean DEFAULT false NOT NULL,
 	CONSTRAINT "users_email_unique" UNIQUE("email")
-);
---> statement-breakpoint
-CREATE TABLE "roles" (
-	"id" char(26) PRIMARY KEY NOT NULL,
-	"type" "roleEnums" NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp,
-	"is_deleted" boolean DEFAULT false NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "patients" (
@@ -116,16 +108,6 @@ CREATE TABLE "sessions" (
 	"is_deleted" boolean DEFAULT false NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "userRoles" (
-	"id" char(26) PRIMARY KEY NOT NULL,
-	"user_id" char(26),
-	"role_id" char(26),
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp,
-	"is_deleted" boolean DEFAULT false NOT NULL
-);
---> statement-breakpoint
 ALTER TABLE "consultations" ADD CONSTRAINT "consultations_patient_id_patients_id_fk" FOREIGN KEY ("patient_id") REFERENCES "public"."patients"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "consultations" ADD CONSTRAINT "consultations_therapist_id_therapists_id_fk" FOREIGN KEY ("therapist_id") REFERENCES "public"."therapists"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "hospitals" ADD CONSTRAINT "hospitals_address_id_addresses_id_fk" FOREIGN KEY ("address_id") REFERENCES "public"."addresses"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -136,6 +118,4 @@ ALTER TABLE "supervisors" ADD CONSTRAINT "supervisors_user_id_users_id_fk" FOREI
 ALTER TABLE "supervisors" ADD CONSTRAINT "supervisors_hospital_id_hospitals_id_fk" FOREIGN KEY ("hospital_id") REFERENCES "public"."hospitals"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_patient_id_patients_id_fk" FOREIGN KEY ("patient_id") REFERENCES "public"."patients"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_therapist_id_therapists_id_fk" FOREIGN KEY ("therapist_id") REFERENCES "public"."therapists"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "sessions" ADD CONSTRAINT "sessions_consultation_id_consultations_id_fk" FOREIGN KEY ("consultation_id") REFERENCES "public"."consultations"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "userRoles" ADD CONSTRAINT "userRoles_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "userRoles" ADD CONSTRAINT "userRoles_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_consultation_id_consultations_id_fk" FOREIGN KEY ("consultation_id") REFERENCES "public"."consultations"("id") ON DELETE no action ON UPDATE no action;

@@ -1,5 +1,5 @@
 import { db } from '../db';
-import { supervisors } from '../schema/supervisors';
+import { supervisors, hospitals } from '../schema';
 import { and, eq, sql } from 'drizzle-orm';
 import type { NewSupervisor, Supervisor } from '../types';
 import type { ULID } from 'ulid';
@@ -28,15 +28,27 @@ export class SupervisorRepository {
     return supervisor ?? null;
   }
 
-  async fetchSupervisorByUserCode(
+  async fetchSupervisorByUserAndHospitalCode(
     userCode: string,
+    hospitalCode: string
   ): Promise<Supervisor | null> {
     const [supervisor] = await db
-      .select()
+      .select({
+        id: supervisors.id,
+        userId: supervisors.userId,
+        userCode: supervisors.userCode,
+        hospitalId: supervisors.hospitalId,
+        createdAt: supervisors.createdAt,
+        updatedAt: supervisors.updatedAt,
+        deletedAt: supervisors.deletedAt,
+        isDeleted: supervisors.isDeleted,
+      })
       .from(supervisors)
+      .innerJoin(hospitals, eq(supervisors.hospitalId, hospitals.id))
       .where(
         and(
           eq(supervisors.userCode, userCode),
+          eq(hospitals.code, hospitalCode),
           eq(supervisors.isDeleted, false),
         ),
       );
