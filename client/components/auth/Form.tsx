@@ -23,7 +23,7 @@ const Form: React.FC = () => {
                 },
                 body: JSON.stringify(formData)
             });
-            
+
             const data = await res.json();
 
             if (!res.ok) {
@@ -62,6 +62,33 @@ const Form: React.FC = () => {
         }
     }
 
+    const handleWorkLogin = async () => {
+        try {
+            const res = await fetch(`${API_URL}/api/v1/auth/workLogin`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const resData = await res.json();
+
+            if (!res.ok) {
+                console.error(resData.message);
+            }
+
+            if (!resData.data.token) {
+                console.error('No token found');
+            } else {
+                localStorage.setItem('token', resData.data.token);
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log(formData);
@@ -69,6 +96,10 @@ const Form: React.FC = () => {
             handleRegister();
         } else if (formType === 'login') {
             handleLogin();
+        } else if (formType === 'work') {
+            handleWorkLogin();
+        } else {
+            console.error('Invalid form type');
         }
     };
 
