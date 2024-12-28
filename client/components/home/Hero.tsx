@@ -14,7 +14,7 @@ const Hero: React.FC = () => {
                         Schedule sessions, track progress, and manage your healthcare experience all in one place. Join users who&apos;ve simplified their medical journey.
                     </p>
                     <div className="mt-8">
-                        <Link href="/register" className="inline-block rounded-lg shadow-lg px-8 py-4 bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors">
+                        <Link href="/auth" className="inline-block rounded-lg shadow-lg px-8 py-4 bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors">
                             Get Started
                         </Link>
                     </div>
