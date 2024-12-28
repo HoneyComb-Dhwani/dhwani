@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { RedisModule, SnsModule, S3Module } from './providers';
 import { AuthModule } from './api/auth/auth.module';
 import { ConsultationsModule } from './api/consultations/consultations.module';
+import { SupervisorsModule } from './api/supervisors/supervisor.module';
 
 @Module({
-  imports: [RedisModule, SnsModule, S3Module, AuthModule, ConsultationsModule],
+  imports: [RedisModule, SnsModule, S3Module, AuthModule, ConsultationsModule, SupervisorsModule],
   controllers: [AppController],
   providers: [AppService],
 })
