@@ -19,8 +19,6 @@ export class ConsultationsRepository {
     const result = db
       .select()
       .from(consultations)
-      .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
-      .leftJoin(patients, eq(consultations.patientId, patients.id))
       .where(eq(consultations.isDeleted, false))
       .limit(limit)
       .offset(offset);
@@ -36,8 +34,6 @@ export class ConsultationsRepository {
     const result = db
       .select()
       .from(consultations)
-      .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
-      .leftJoin(patients, eq(consultations.patientId, patients.id))
       .where(
         and(
           eq(consultations.isDeleted, false),
@@ -58,8 +54,6 @@ export class ConsultationsRepository {
     const result = db
       .select()
       .from(consultations)
-      .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
-      .leftJoin(patients, eq(consultations.patientId, patients.id))
       .where(
         and(
           eq(consultations.isDeleted, false),
@@ -80,8 +74,6 @@ export class ConsultationsRepository {
     const result = db
       .select()
       .from(consultations)
-      .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
-      .leftJoin(patients, eq(consultations.patientId, patients.id))
       .where(
         and(
           eq(consultations.isDeleted, false),
@@ -96,7 +88,23 @@ export class ConsultationsRepository {
 
   async fetchConsultationById(id: ULID) {
     const consultation = await db
-      .select()
+      .select({
+        id: consultations.id,
+        patientId: consultations.patientId,
+        patientFirstName: patients.firstName,
+        patientMiddleName: patients.middleName,
+        patientLastName: patients.lastName,
+        patientEmail: patients.email,
+        therapistId: consultations.therapistId,
+        therapistFirstName: therapists.firstName,
+        therapistMiddleName: therapists.middleName,
+        therapistLastName: therapists.lastName,
+        therapistEmail: therapists.email,
+        createdAt: consultations.createdAt,
+        updatedAt: consultations.updatedAt,
+        deletedAt: consultations.deletedAt,
+        isDeleted: consultations.isDeleted,
+      })
       .from(consultations)
       .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
       .leftJoin(patients, eq(consultations.patientId, patients.id))

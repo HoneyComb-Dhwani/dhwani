@@ -3,8 +3,7 @@ import { SupervisorController } from './supervisor.controller';
 import { SupervisorService } from './supervisor.service';
 
 @Module({
-    controllers: [SupervisorController],
-    providers: [SupervisorService]
-
+  controllers: [SupervisorController],
+  providers: [SupervisorService],
 })
 export class SupervisorsModule {}

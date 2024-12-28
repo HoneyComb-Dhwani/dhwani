@@ -28,12 +28,20 @@ export class ConsultationsService {
     };
   }
 
-  async fetchAllConsultations(page: number, limit: number): Promise<ReturnResponse | ReturnError> {
+  async fetchAllConsultations(
+    page: number,
+    limit: number,
+  ): Promise<ReturnResponse | ReturnError> {
     const cacheKey = `consultations:${page}:${limit}`;
     const cachedData = await this.redisClient.get(cacheKey);
 
     if (cachedData) {
-      return JSON.parse(cachedData);
+      return {
+        status: 200,
+        message: 'OK',
+        prettyMessage: 'Consultations fetched successfully',
+        data: JSON.parse(cachedData),
+      };
     }
 
     const offset = (page - 1) * limit;
@@ -55,8 +63,8 @@ export class ConsultationsService {
       status: 200,
       message: 'OK',
       prettyMessage: 'Consultations fetched successfully',
-      data: consultations
-    }
+      data: consultations,
+    };
   }
 
   async fetchConsultationsByHospitalId(
@@ -68,7 +76,12 @@ export class ConsultationsService {
     const cachedData = await this.redisClient.get(cacheKey);
 
     if (cachedData) {
-      return JSON.parse(cachedData);
+      return {
+        status: 200,
+        message: 'OK',
+        prettyMessage: 'Consultations fetched successfully',
+        data: JSON.parse(cachedData),
+      };
     }
 
     const offset = (page - 1) * limit;
@@ -92,8 +105,8 @@ export class ConsultationsService {
       status: 200,
       message: 'OK',
       prettyMessage: 'Consultations fetched successfully',
-      data: consultations
-    }
+      data: consultations,
+    };
   }
 
   async fetchConsultationsByPatientId(
@@ -105,7 +118,12 @@ export class ConsultationsService {
     const cachedData = await this.redisClient.get(cacheKey);
 
     if (cachedData) {
-      return JSON.parse(cachedData);
+      return {
+        status: 200,
+        message: 'OK',
+        prettyMessage: 'Consultations fetched successfully',
+        data: JSON.parse(cachedData),
+      };
     }
 
     const offset = (page - 1) * limit;
@@ -129,8 +147,8 @@ export class ConsultationsService {
       status: 200,
       message: 'OK',
       prettyMessage: 'Consultations fetched successfully',
-      data: consultations
-    }
+      data: consultations,
+    };
   }
 
   async fetchConsultationsByTherapistId(
@@ -142,7 +160,12 @@ export class ConsultationsService {
     const cachedData = await this.redisClient.get(cacheKey);
 
     if (cachedData) {
-      return JSON.parse(cachedData);
+      return {
+        status: 200,
+        message: 'OK',
+        prettyMessage: 'Consultations fetched successfully',
+        data: JSON.parse(cachedData),
+      };
     }
 
     const offset = (page - 1) * limit;
@@ -162,8 +185,8 @@ export class ConsultationsService {
       status: 200,
       message: 'OK',
       prettyMessage: 'Consultations fetched successfully',
-      data: consultations
-    }
+      data: consultations,
+    };
   }
 
   async fetchConsultationById(id: ULID): Promise<ReturnResponse | ReturnError> {
@@ -171,7 +194,12 @@ export class ConsultationsService {
     const cachedData = await this.redisClient.get(cacheKey);
 
     if (cachedData) {
-      return JSON.parse(cachedData);
+      return {
+        status: 200,
+        message: 'OK',
+        prettyMessage: 'Consultation fetched successfully',
+        data: JSON.parse(cachedData),
+      };
     }
 
     const consultation =
@@ -189,11 +217,14 @@ export class ConsultationsService {
       status: 200,
       message: 'OK',
       prettyMessage: 'Consultation fetched successfully',
-      data: consultation
-    }
+      data: consultation,
+    };
   }
 
-  async updateConsultation(id: ULID, consultationData: NewConsultation): Promise<ReturnResponse | ReturnError> {
+  async updateConsultation(
+    id: ULID,
+    consultationData: NewConsultation,
+  ): Promise<ReturnResponse | ReturnError> {
     const consultation = await consultationsRepository.updateConsultation(
       id,
       consultationData,

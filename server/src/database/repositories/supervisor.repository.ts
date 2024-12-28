@@ -15,6 +15,17 @@ export class SupervisorRepository {
 
   async fetchAllSupervisors(limit: number, offset: number) {
     const result = await db
+      .select()
+      .from(supervisors)
+      .where(eq(supervisors.isDeleted, false))
+      .limit(limit)
+      .offset(offset);
+
+    return result ?? null;
+  }
+
+  async fetchSupervisorById(id: ULID, limit: number, offset: number) {
+    const [supervisor] = await db
       .select({
         id: supervisors.id,
         userId: supervisors.userId,
@@ -32,19 +43,6 @@ export class SupervisorRepository {
       .from(supervisors)
       .leftJoin(hospitals, eq(supervisors.hospitalId, hospitals.id))
       .leftJoin(users, eq(supervisors.userId, users.id))
-      .where(eq(supervisors.isDeleted, false))
-      .limit(limit)
-      .offset(offset);
-
-    return result ?? null;
-  }
-
-  async fetchSupervisorById(id: ULID, limit: number, offset: number) {
-    const [supervisor] = await db
-      .select()
-      .from(supervisors)
-      .leftJoin(hospitals, eq(supervisors.hospitalId, hospitals.id))
-      .leftJoin(users, eq(supervisors.userId, users.id))
       .where(and(eq(supervisors.id, id), eq(supervisors.isDeleted, false)))
       .limit(limit)
       .offset(offset);
@@ -55,7 +53,7 @@ export class SupervisorRepository {
   async fetchSupervisorByUserAndHospitalCode(
     userCode: string,
     hospitalCode: string,
-  ): Promise<Supervisor | null> {
+  ) {
     const [supervisor] = await db
       .select({
         id: supervisors.id,
@@ -66,9 +64,15 @@ export class SupervisorRepository {
         updatedAt: supervisors.updatedAt,
         deletedAt: supervisors.deletedAt,
         isDeleted: supervisors.isDeleted,
+        hospitalName: hospitals.name,
+        hospitalCode: hospitals.code,
+        userEmail: users.email,
+        userRole: users.role,
+        userHashPassword: users.hashPassword,
       })
       .from(supervisors)
       .innerJoin(hospitals, eq(supervisors.hospitalId, hospitals.id))
+      .innerJoin(users, eq(supervisors.userId, users.id))
       .where(
         and(
           eq(supervisors.userCode, userCode),

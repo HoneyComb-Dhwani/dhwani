@@ -1,7 +1,7 @@
 import type { ULID } from 'ulid';
-import { NewHospital, Hospital } from '../types';
+import { NewHospital } from '../types';
 import { db } from '../db';
-import { hospitals } from '../schema';
+import { addresses, hospitals } from '../schema';
 import { and, eq, sql, ilike } from 'drizzle-orm';
 
 export class HospitalRepository {
@@ -13,29 +13,94 @@ export class HospitalRepository {
     return newHospital;
   }
 
-  async fetchHospitalByName(name: string): Promise<Hospital | null> {
-    const [hospital] = await db
+  async fetchAllHospitals() {
+    const allHospitals = await db
       .select()
       .from(hospitals)
+      .where(eq(hospitals.isDeleted, false));
+
+    return allHospitals ?? null;
+  }
+
+  async fetchHospitalByName(name: string) {
+    const [hospital] = await db
+      .select({
+        id: hospitals.id,
+        name: hospitals.name,
+        code: hospitals.code,
+        address: {
+          id: addresses.id,
+          houseNumber: addresses.houseNumber,
+          blockNumber: addresses.blockNumber,
+          street: addresses.street,
+          city: addresses.city,
+          state: addresses.state,
+          country: addresses.country,
+          postalCode: addresses.postalCode,
+        },
+        createdAt: hospitals.createdAt,
+        updatedAt: hospitals.updatedAt,
+        deletedAt: hospitals.deletedAt,
+        isDeleted: hospitals.isDeleted,
+      })
+      .from(hospitals)
+      .leftJoin(addresses, eq(hospitals.addressId, addresses.id))
       .where(ilike(hospitals.name, `${name}%`));
+
     return hospital ?? null;
   }
 
-  async fetchHospitalById(id: ULID): Promise<Hospital | null> {
+  async fetchHospitalById(id: ULID) {
     const [hospital] = await db
-      .select()
+      .select({
+        id: hospitals.id,
+        name: hospitals.name,
+        code: hospitals.code,
+        address: {
+          id: addresses.id,
+          houseNumber: addresses.houseNumber,
+          blockNumber: addresses.blockNumber,
+          street: addresses.street,
+          city: addresses.city,
+          state: addresses.state,
+          country: addresses.country,
+          postalCode: addresses.postalCode,
+        },
+        createdAt: hospitals.createdAt,
+        updatedAt: hospitals.updatedAt,
+        deletedAt: hospitals.deletedAt,
+        isDeleted: hospitals.isDeleted,
+      })
       .from(hospitals)
+      .leftJoin(addresses, eq(hospitals.addressId, addresses.id))
       .where(and(eq(hospitals.id, id), eq(hospitals.isDeleted, false)));
 
     return hospital ?? null;
   }
 
-  async fetchHospitalByHospitalCode(
-    hospitalCode: string,
-  ): Promise<Hospital | null> {
+  async fetchHospitalByHospitalCode(hospitalCode: string) {
     const [hospital] = await db
-      .select()
+      .select({
+        id: hospitals.id,
+        name: hospitals.name,
+        code: hospitals.code,
+        address: {
+          id: addresses.id,
+          houseNumber: addresses.houseNumber,
+          blockNumber: addresses.blockNumber,
+          street: addresses.street,
+          city: addresses.city,
+          state: addresses.state,
+          country: addresses.country,
+          postalCode: addresses.postalCode,
+        },
+        createdAt: hospitals.createdAt,
+        updatedAt: hospitals.updatedAt,
+        deletedAt: hospitals.deletedAt,
+        isDeleted: hospitals.isDeleted,
+      })
       .from(hospitals)
+      .leftJoin(addresses, eq(hospitals.addressId, addresses.id))
       .where(
         and(eq(hospitals.code, hospitalCode), eq(hospitals.isDeleted, false)),
       );

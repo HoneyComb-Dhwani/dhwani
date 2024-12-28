@@ -64,6 +64,7 @@ CREATE TABLE "patients" (
 	"date_of_birth" timestamp NOT NULL,
 	"gender" "genderEnum" NOT NULL,
 	"address_id" char(26),
+	"hospital_id" char(26),
 	"emergency_contact_name" text NOT NULL,
 	"emergency_contact_phone" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -76,6 +77,12 @@ CREATE TABLE "patients" (
 CREATE TABLE "therapists" (
 	"id" char(26) PRIMARY KEY NOT NULL,
 	"user_id" char(26),
+	"first_name" text NOT NULL,
+	"middle_name" text,
+	"last_name" text NOT NULL,
+	"email" text NOT NULL,
+	"phone_number" text NOT NULL,
+	"address_id" char(26) NOT NULL,
 	"user_code" text NOT NULL,
 	"hospital_id" char(26),
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -113,7 +120,9 @@ ALTER TABLE "consultations" ADD CONSTRAINT "consultations_therapist_id_therapist
 ALTER TABLE "hospitals" ADD CONSTRAINT "hospitals_address_id_addresses_id_fk" FOREIGN KEY ("address_id") REFERENCES "public"."addresses"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "patients" ADD CONSTRAINT "patients_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "patients" ADD CONSTRAINT "patients_address_id_addresses_id_fk" FOREIGN KEY ("address_id") REFERENCES "public"."addresses"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "patients" ADD CONSTRAINT "patients_hospital_id_hospitals_id_fk" FOREIGN KEY ("hospital_id") REFERENCES "public"."hospitals"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "therapists" ADD CONSTRAINT "therapists_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "therapists" ADD CONSTRAINT "therapists_address_id_addresses_id_fk" FOREIGN KEY ("address_id") REFERENCES "public"."addresses"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "supervisors" ADD CONSTRAINT "supervisors_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "supervisors" ADD CONSTRAINT "supervisors_hospital_id_hospitals_id_fk" FOREIGN KEY ("hospital_id") REFERENCES "public"."hospitals"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_patient_id_patients_id_fk" FOREIGN KEY ("patient_id") REFERENCES "public"."patients"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

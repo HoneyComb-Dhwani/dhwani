@@ -1,5 +1,5 @@
 {
-  "id": "12d1e12f-0c35-41a6-bf73-ad23bf62cf15",
+  "id": "5138b396-7d37-47e5-b55c-86b6622d1799",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -423,6 +423,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "hospital_id": {
+          "name": "hospital_id",
+          "type": "char(26)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "emergency_contact_name": {
           "name": "emergency_contact_name",
           "type": "text",
@@ -490,6 +496,19 @@
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
+        },
+        "patients_hospital_id_hospitals_id_fk": {
+          "name": "patients_hospital_id_hospitals_id_fk",
+          "tableFrom": "patients",
+          "tableTo": "hospitals",
+          "columnsFrom": [
+            "hospital_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -521,6 +540,42 @@
           "type": "char(26)",
           "primaryKey": false,
           "notNull": false
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "middle_name": {
+          "name": "middle_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address_id": {
+          "name": "address_id",
+          "type": "char(26)",
+          "primaryKey": false,
+          "notNull": true
         },
         "user_code": {
           "name": "user_code",
@@ -570,6 +625,19 @@
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "therapists_address_id_addresses_id_fk": {
+          "name": "therapists_address_id_addresses_id_fk",
+          "tableFrom": "therapists",
+          "tableTo": "addresses",
+          "columnsFrom": [
+            "address_id"
           ],
           "columnsTo": [
             "id"

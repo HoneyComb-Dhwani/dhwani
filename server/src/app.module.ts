@@ -5,9 +5,18 @@ import { RedisModule, SnsModule, S3Module } from './providers';
 import { AuthModule } from './api/routes/auth/auth.module';
 import { ConsultationsModule } from './api/routes/consultations/consultations.module';
 import { SupervisorsModule } from './api/routes/supervisors/supervisor.module';
+import { PatientsModule } from './api/routes/patients/patients.module';
 
 @Module({
-  imports: [RedisModule, SnsModule, S3Module, AuthModule, ConsultationsModule, SupervisorsModule],
+  imports: [
+    RedisModule,
+    SnsModule,
+    S3Module,
+    AuthModule,
+    ConsultationsModule,
+    SupervisorsModule,
+    PatientsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

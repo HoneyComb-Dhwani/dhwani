@@ -3,6 +3,7 @@ import { ulidType } from '../types';
 import { ULID, ulid } from 'ulid';
 import { addresses } from './addresses';
 import { users } from './users';
+import { hospitals } from './hospitals';
 
 export const genderEnums = pgEnum('genderEnum', ['Male', 'Female', 'Other']);
 export const patients = pgTable('patients', {
@@ -26,6 +27,11 @@ export const patients = pgTable('patients', {
     default: ulid,
     foreignKey: true,
   }).references(() => addresses.id),
+  hospitalId: ulidType('hospital_id', {
+    primaryKey: false,
+    default: ulid,
+    foreignKey: true,
+  }).references(() => hospitals.id),
   emergencyContactName: text('emergency_contact_name').notNull(),
   emergencyContactPhone: text('emergency_contact_phone').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),

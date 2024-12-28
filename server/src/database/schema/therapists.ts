@@ -2,6 +2,7 @@ import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 import { ulidType } from '../types';
 import { ULID, ulid } from 'ulid';
 import { users } from './users';
+import { addresses } from './addresses';
 
 export const therapists = pgTable('therapists', {
   id: ulidType('id')
@@ -12,6 +13,18 @@ export const therapists = pgTable('therapists', {
     default: ulid,
     foreignKey: true,
   }).references(() => users.id),
+  firstName: text('first_name').notNull(),
+  middleName: text('middle_name'),
+  lastName: text('last_name').notNull(),
+  email: text('email').notNull(),
+  phoneNumber: text('phone_number').notNull(),
+  addressId: ulidType('address_id', {
+    primaryKey: false,
+    default: ulid,
+    foreignKey: true,
+  })
+    .notNull()
+    .references(() => addresses.id),
   userCode: text('user_code').notNull(),
   hospitalId: ulidType('hospital_id', {
     primaryKey: false,

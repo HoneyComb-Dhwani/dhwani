@@ -9,9 +9,11 @@ import { supervisorRepository } from 'src/database/repositories/supervisor.repos
 export class SupervisorService {
   constructor(
     @Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType,
-  ) { }
+  ) {}
 
-  async createSupervisor(body: NewSupervisor): Promise<ReturnResponse | ReturnError> {
+  async createSupervisor(
+    body: NewSupervisor,
+  ): Promise<ReturnResponse | ReturnError> {
     const supervisor = await supervisorRepository.insertSupervisor(body);
 
     if (!supervisor) {
@@ -25,17 +27,28 @@ export class SupervisorService {
     };
   }
 
-  async getAllSupervisors(page: number, limit: number): Promise<ReturnResponse | ReturnError> {
-    const cacheKey =  `supervisors:${page}:${limit}`;
+  async getAllSupervisors(
+    page: number,
+    limit: number,
+  ): Promise<ReturnResponse | ReturnError> {
+    const cacheKey = `supervisors:${page}:${limit}`;
     const cacheData = await this.redisClient.get(cacheKey);
 
     if (cacheData) {
-      return JSON.parse(cacheData);
+      return {
+        status: 200,
+        message: 'OK',
+        prettyMessage: 'Supervisors fetched successfully',
+        data: JSON.parse(cacheData),
+      };
     }
-    
+
     const offset = (page - 1) * limit;
 
-    const supervisors = await supervisorRepository.fetchAllSupervisors(limit, offset);
+    const supervisors = await supervisorRepository.fetchAllSupervisors(
+      limit,
+      offset,
+    );
 
     if (supervisors === null) {
       return errors.NOT_FOUND;
@@ -53,17 +66,30 @@ export class SupervisorService {
     };
   }
 
-  async getSupervisorById(id: ULID, page: number, limit: number): Promise<ReturnResponse | ReturnError> {
+  async getSupervisorById(
+    id: ULID,
+    page: number,
+    limit: number,
+  ): Promise<ReturnResponse | ReturnError> {
     const cacheKey = `supervisor:${id}`;
     const cacheData = await this.redisClient.get(cacheKey);
 
     if (cacheData) {
-      return JSON.parse(cacheData);
+      return {
+        status: 200,
+        message: 'OK',
+        prettyMessage: 'Supervisor fetched successfully',
+        data: JSON.parse(cacheData),
+      };
     }
 
     const offset = (page - 1) * limit;
 
-    const supervisor = await supervisorRepository.fetchSupervisorById(id, limit, offset);
+    const supervisor = await supervisorRepository.fetchSupervisorById(
+      id,
+      limit,
+      offset,
+    );
 
     if (supervisor === null) {
       return errors.NOT_FOUND;
@@ -85,7 +111,10 @@ export class SupervisorService {
     id: ULID,
     body: NewSupervisor,
   ): Promise<ReturnResponse | ReturnError> {
-    const updatedSupervisor = await supervisorRepository.updateSupervisor(id, body);
+    const updatedSupervisor = await supervisorRepository.updateSupervisor(
+      id,
+      body,
+    );
 
     if (!updatedSupervisor) {
       return errors.NOT_FOUND;
@@ -94,7 +123,7 @@ export class SupervisorService {
     return {
       status: 200,
       message: 'OK',
-      prettyMessage: 'Supervisor updated successfully'
+      prettyMessage: 'Supervisor updated successfully',
     };
   }
 
