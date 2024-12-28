@@ -30,10 +30,7 @@ export class UserRepository {
     return user ?? null;
   }
 
-  async updateUser(
-    id: ULID,
-    updatedData: NewUser,
-  ): Promise<User | null> {
+  async updateUser(id: ULID, updatedData: NewUser): Promise<User | null> {
     const [user] = await db
       .update(users)
       .set({

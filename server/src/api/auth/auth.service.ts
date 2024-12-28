@@ -1,10 +1,12 @@
 import type { RedisClientType } from 'redis';
+import type { RegisterDto, LoginDto, WorkLoginDto } from './dto';
+import type { Supervisor, Therapist, User } from 'src/database';
 import { Inject, Injectable } from '@nestjs/common';
 import { comparePassword, hashPassword, signJwt } from './utils';
-import { RegisterDto, LoginDto } from './dto';
 import { errors, ReturnError, ReturnResponse } from '../constants';
 import { userRepository } from 'src/database/repositories/user.repository';
-import { User } from 'src/database';
+import { supervisorRepository } from 'src/database/repositories/supervisor.repository';
+import { therapistRepository } from 'src/database/repositories/therapist.repository';
 
 @Injectable()
 export class AuthService {
@@ -63,6 +65,78 @@ export class AuthService {
       }
 
       await this.redisClient.setEx(`user:${email}`, 3600, JSON.stringify(user));
+    }
+
+    const token = signJwt(user.id);
+
+    return {
+      status: 200,
+      message: 'OK',
+      prettyMessage: 'User logged in successfully',
+      data: {
+        token,
+      },
+    };
+  }
+
+  async workLogin(body: WorkLoginDto): Promise<ReturnResponse | ReturnError> {
+    const { credentials, password } = body;
+
+    const userCode = credentials.split('@')[0];
+    const hospitalCode = credentials.split('@')[1];
+
+    if (!userCode || !hospitalCode) {
+      return errors.INVALID_CREDENTIALS;
+    }
+
+    let worker: Supervisor | Therapist | null = null;
+
+    const workerCacheKey = `worker:${userCode}`;
+    const cachedWorker = await this.redisClient.get(workerCacheKey);
+
+    if (cachedWorker) {
+      worker = JSON.parse(cachedWorker) as Supervisor | Therapist;
+    } else {
+      worker =
+        (await supervisorRepository.fetchSupervisorByUserCode(userCode)) ||
+        (await therapistRepository.fetchTherapistByUserCode(userCode));
+
+      if (!worker) {
+        return errors.INVALID_CREDENTIALS;
+      }
+
+      await this.redisClient.setEx(
+        workerCacheKey,
+        3600,
+        JSON.stringify(worker),
+      );
+    }
+
+    const getUserFromCache = await this.redisClient.get(
+      `user:${worker.userId}`,
+    );
+    let user: User;
+
+    if (getUserFromCache) {
+      user = JSON.parse(getUserFromCache) as User;
+    } else {
+      user = await userRepository.fetchUserById(worker.userId);
+
+      if (!user) {
+        return errors.INVALID_CREDENTIALS;
+      }
+
+      await this.redisClient.setEx(
+        `user:${worker.userId}`,
+        3600,
+        JSON.stringify(user),
+      );
+    }
+
+    const isValidPassword = await comparePassword(password, user.hashPassword);
+
+    if (!isValidPassword) {
+      return errors.INVALID_CREDENTIALS;
     }
 
     const token = signJwt(user.id);
