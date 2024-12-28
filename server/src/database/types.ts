@@ -6,11 +6,9 @@ import { addresses } from './schema/addresses';
 import { consultations } from './schema/consultations';
 import { hospitals } from './schema/hospitals';
 import { patients } from './schema/patients';
-import { roles } from './schema/roles';
 import { sessions } from './schema/sessions';
 import { supervisors } from './schema/supervisors';
 import { therapists } from './schema/therapists';
-import { userRoles } from './schema/userRoles';
 
 export const ulidType = customType<{
   data: ULID;
@@ -27,12 +25,6 @@ export type NewAddress = InferInsertModel<typeof addresses>;
 
 export type User = InferSelectModel<typeof users>;
 export type NewUser = InferInsertModel<typeof users>;
-
-export type Role = InferSelectModel<typeof roles>;
-export type NewRole = InferInsertModel<typeof roles>;
-
-export type UserRole = InferSelectModel<typeof userRoles>;
-export type NewUserRole = InferInsertModel<typeof userRoles>;
 
 export type Hospital = InferSelectModel<typeof hospitals>;
 export type NewHospital = InferInsertModel<typeof hospitals>;
