@@ -13,7 +13,7 @@ import { hospitalRepository } from 'src/database/repositories/hospital.repositor
 export class AuthService {
   constructor(
     @Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType,
-  ) { }
+  ) {}
 
   async register(body: RegisterDto): Promise<ReturnResponse | ReturnError> {
     const { name, email, password } = body;
@@ -28,7 +28,7 @@ export class AuthService {
       name,
       email,
       hashPassword: hashedPassword,
-      role: 'USER'
+      role: 'USER',
     });
 
     if (!user) {
@@ -102,8 +102,14 @@ export class AuthService {
       worker = JSON.parse(cachedWorker) as Supervisor | Therapist;
     } else {
       worker =
-        (await supervisorRepository.fetchSupervisorByUserAndHospitalCode(userCode, hospitalCode)) ||
-        (await therapistRepository.fetchTherapistByUserAndHospitalCode(userCode, hospitalCode));
+        (await supervisorRepository.fetchSupervisorByUserAndHospitalCode(
+          userCode,
+          hospitalCode,
+        )) ||
+        (await therapistRepository.fetchTherapistByUserAndHospitalCode(
+          userCode,
+          hospitalCode,
+        ));
 
       if (!worker) {
         return errors.INVALID_CREDENTIALS;
@@ -116,7 +122,8 @@ export class AuthService {
       );
     }
 
-    const checkHospitalCode = await hospitalRepository.fetchHospitalByHospitalCode(hospitalCode);
+    const checkHospitalCode =
+      await hospitalRepository.fetchHospitalByHospitalCode(hospitalCode);
 
     if (!checkHospitalCode || checkHospitalCode.id !== worker.hospitalId) {
       return errors.INVALID_CREDENTIALS;
@@ -164,21 +171,33 @@ export class AuthService {
     };
   }
 
+  async checkIfUserAdmin(
+    userCode: string,
+    hospitalCode: string,
+  ): Promise<boolean> {
+    let isAdmin = false;
 
-  async checkIfUserAdmin(userCode: string, hospitalCode: string): Promise<boolean> {
-    let isAdmin = false
-
-    const checkCachedAdmin = await this.redisClient.get(`admin:${userCode + hospitalCode}`);
+    const checkCachedAdmin = await this.redisClient.get(
+      `admin:${userCode + hospitalCode}`,
+    );
 
     if (checkCachedAdmin) {
       isAdmin = JSON.parse(checkCachedAdmin) as boolean;
     } else {
-      const admin = await supervisorRepository.fetchSupervisorByUserAndHospitalCode(userCode, hospitalCode);
+      const admin =
+        await supervisorRepository.fetchSupervisorByUserAndHospitalCode(
+          userCode,
+          hospitalCode,
+        );
       if (admin) {
         isAdmin = true;
       }
 
-      await this.redisClient.setEx(`admin:${userCode + hospitalCode}`, 3600, JSON.stringify(isAdmin));
+      await this.redisClient.setEx(
+        `admin:${userCode + hospitalCode}`,
+        3600,
+        JSON.stringify(isAdmin),
+      );
 
       return isAdmin;
     }

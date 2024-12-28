@@ -30,7 +30,7 @@ export class SupervisorRepository {
 
   async fetchSupervisorByUserAndHospitalCode(
     userCode: string,
-    hospitalCode: string
+    hospitalCode: string,
   ): Promise<Supervisor | null> {
     const [supervisor] = await db
       .select({

@@ -1,14 +1,22 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
 
 @Injectable()
 export class S3Service {
-  constructor(
-    @Inject('S3_CLIENT') private readonly s3Client: S3Client,
-  ) {}
+  constructor(@Inject('S3_CLIENT') private readonly s3Client: S3Client) {}
 
-  async uploadFile(bucketName: string, key: string, body: Buffer, contentType?: string): Promise<void> {
+  async uploadFile(
+    bucketName: string,
+    key: string,
+    body: Buffer,
+    contentType?: string,
+  ): Promise<void> {
     const command = new PutObjectCommand({
       Bucket: bucketName,
       Key: key,
