@@ -1,10 +1,9 @@
 import type { ULID } from 'ulid';
 import type { RedisClientType } from 'redis';
-import { errors } from '../constants';
+import { errors, type ReturnResponse, type ReturnError } from '../constants';
 import { Inject, Injectable } from '@nestjs/common';
 import { consultationsRepository } from 'src/database/repositories/consultations.repository';
 import { NewConsultation } from 'src/database';
-import { ReturnError, ReturnResponse } from '../constants';
 
 @Injectable()
 export class ConsultationsService {

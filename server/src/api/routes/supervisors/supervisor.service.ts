@@ -1,11 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import type { ULID } from 'ulid';
+import type { RedisClientType } from 'redis';
+import type { NewSupervisor } from 'src/database';
+import { errors, type ReturnError, type ReturnResponse } from '../../constants';
+import { Inject, Injectable } from '@nestjs/common';
 import { supervisorRepository } from 'src/database/repositories/supervisor.repository';
-import { ULID } from 'ulid';
-import { errors, ReturnError, ReturnResponse } from '../constants';
-import { NewSupervisor } from 'src/database';
 
 @Injectable()
 export class SupervisorService {
+  constructor(
+    @Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType,
+  ) { }
+
   async createSupervisor(body: NewSupervisor): Promise<ReturnResponse | ReturnError> {
     const supervisor = await supervisorRepository.insertSupervisor(body);
 
@@ -15,9 +20,8 @@ export class SupervisorService {
 
     return {
       status: 200,
-      message: 'Created',
+      message: 'OK',
       prettyMessage: 'Supervisor created successfully',
-      data: supervisor,
     };
   }
 

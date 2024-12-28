@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RedisModule, SnsModule, S3Module } from './providers';
-import { AuthModule } from './api/auth/auth.module';
-import { ConsultationsModule } from './api/consultations/consultations.module';
-import { SupervisorsModule } from './api/supervisors/supervisor.module';
+import { AuthModule } from './api/routes/auth/auth.module';
+import { ConsultationsModule } from './api/routes/consultations/consultations.module';
+import { SupervisorsModule } from './api/routes/supervisors/supervisor.module';
 
 @Module({
   imports: [RedisModule, SnsModule, S3Module, AuthModule, ConsultationsModule, SupervisorsModule],

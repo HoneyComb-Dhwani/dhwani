@@ -1,7 +1,8 @@
+
+import type { ULID } from 'ulid';
+import type { NewSupervisor } from 'src/database';
 import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { SupervisorService } from './supervisor.service';
-import { ULID } from 'ulid';
-import { NewSupervisor } from 'src/database';
 
 @Controller('supervisors')
 export class SupervisorController {

@@ -2,7 +2,7 @@ import type { RedisClientType } from 'redis';
 import type { RegisterDto, LoginDto, WorkLoginDto } from './dto';
 import type { Supervisor, Therapist, User } from 'src/database';
 import { Inject, Injectable } from '@nestjs/common';
-import { comparePassword, hashPassword, signJwt } from './utils';
+import { comparePassword, hashPassword, signJwt } from '../../utils';
 import { errors, ReturnError, ReturnResponse } from '../constants';
 import { userRepository } from 'src/database/repositories/user.repository';
 import { supervisorRepository } from 'src/database/repositories/supervisor.repository';

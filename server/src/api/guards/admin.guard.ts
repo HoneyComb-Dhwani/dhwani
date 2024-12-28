@@ -10,7 +10,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { userRepository } from 'src/database/repositories/user.repository';
-import { verifyJwt } from '../auth/utils';
+import { verifyJwt } from '../utils';
 import { errors } from '../constants';
 
 @Injectable()
