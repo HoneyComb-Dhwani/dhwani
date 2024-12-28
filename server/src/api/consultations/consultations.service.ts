@@ -29,7 +29,7 @@ export class ConsultationsService {
     };
   }
 
-  async fetchAllConsultations(page: number, limit: number) {
+  async fetchAllConsultations(page: number, limit: number): Promise<ReturnResponse | ReturnError> {
     const cacheKey = `consultations:${page}:${limit}`;
     const cachedData = await this.redisClient.get(cacheKey);
 
@@ -52,14 +52,19 @@ export class ConsultationsService {
       await this.redisClient.set(cacheKey, JSON.stringify(consultations));
     }
 
-    return consultations ?? null;
+    return {
+      status: 200,
+      message: 'OK',
+      prettyMessage: 'Consultations fetched successfully',
+      data: consultations
+    }
   }
 
   async fetchConsultationsByHospitalId(
     hospitalId: ULID,
     page: number,
     limit: number,
-  ) {
+  ): Promise<ReturnResponse | ReturnError> {
     const cacheKey = `consultations:hospitalId:${hospitalId}:${page}:${limit}`;
     const cachedData = await this.redisClient.get(cacheKey);
 
@@ -84,14 +89,19 @@ export class ConsultationsService {
       await this.redisClient.set(cacheKey, JSON.stringify(consultations));
     }
 
-    return consultations ?? null;
+    return {
+      status: 200,
+      message: 'OK',
+      prettyMessage: 'Consultations fetched successfully',
+      data: consultations
+    }
   }
 
   async fetchConsultationsByPatientId(
     patientId: ULID,
     page: number,
     limit: number,
-  ) {
+  ): Promise<ReturnResponse | ReturnError> {
     const cacheKey = `consultations:patientId:${patientId}:${page}:${limit}`;
     const cachedData = await this.redisClient.get(cacheKey);
 
@@ -116,14 +126,19 @@ export class ConsultationsService {
       await this.redisClient.set(cacheKey, JSON.stringify(consultations));
     }
 
-    return consultations ?? null;
+    return {
+      status: 200,
+      message: 'OK',
+      prettyMessage: 'Consultations fetched successfully',
+      data: consultations
+    }
   }
 
   async fetchConsultationsByTherapistId(
     therapistId: ULID,
     page: number,
     limit: number,
-  ) {
+  ): Promise<ReturnResponse | ReturnError> {
     const cacheKey = `consultations:therapistId:${therapistId}:${page}:${limit}`;
     const cachedData = await this.redisClient.get(cacheKey);
 
@@ -144,10 +159,15 @@ export class ConsultationsService {
       await this.redisClient.set(cacheKey, JSON.stringify(consultations));
     }
 
-    return consultations ?? null;
+    return {
+      status: 200,
+      message: 'OK',
+      prettyMessage: 'Consultations fetched successfully',
+      data: consultations
+    }
   }
 
-  async fetchConsultationById(id: ULID) {
+  async fetchConsultationById(id: ULID): Promise<ReturnResponse | ReturnError> {
     const cacheKey = `consultation:${id}`;
     const cachedData = await this.redisClient.get(cacheKey);
 
@@ -166,10 +186,15 @@ export class ConsultationsService {
       await this.redisClient.set(cacheKey, JSON.stringify(consultation));
     }
 
-    return consultation ?? null;
+    return {
+      status: 200,
+      message: 'OK',
+      prettyMessage: 'Consultation fetched successfully',
+      data: consultation
+    }
   }
 
-  async updateConsultation(id: ULID, consultationData: NewConsultation) {
+  async updateConsultation(id: ULID, consultationData: NewConsultation): Promise<ReturnResponse | ReturnError> {
     const consultation = await consultationsRepository.updateConsultation(
       id,
       consultationData,
@@ -186,7 +211,7 @@ export class ConsultationsService {
     };
   }
 
-  async deleteConsultation(id: ULID) {
+  async deleteConsultation(id: ULID): Promise<ReturnResponse | ReturnError> {
     const consultation = await consultationsRepository.deleteConsultation(id);
 
     if (consultation === false) {
