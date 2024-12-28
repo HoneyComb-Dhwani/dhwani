@@ -25,11 +25,24 @@ export class SupervisorService {
     };
   }
 
-  async getAllSupervisors(): Promise<ReturnResponse | ReturnError> {
-    const supervisors = await supervisorRepository.fetchAllSupervisors();
+  async getAllSupervisors(page: number, limit: number): Promise<ReturnResponse | ReturnError> {
+    const cacheKey =  `supervisors:${page}:${limit}`;
+    const cacheData = await this.redisClient.get(cacheKey);
 
-    if (!supervisors) {
+    if (cacheData) {
+      return JSON.parse(cacheData);
+    }
+    
+    const offset = (page - 1) * limit;
+
+    const supervisors = await supervisorRepository.fetchAllSupervisors(limit, offset);
+
+    if (supervisors === null) {
       return errors.NOT_FOUND;
+    }
+
+    if (supervisors) {
+      await this.redisClient.set(cacheKey, JSON.stringify(supervisors));
     }
 
     return {
@@ -40,11 +53,24 @@ export class SupervisorService {
     };
   }
 
-  async getSupervisorById(id: ULID): Promise<ReturnResponse | ReturnError> {
-    const supervisor = await supervisorRepository.fetchSupervisorById(id);
+  async getSupervisorById(id: ULID, page: number, limit: number): Promise<ReturnResponse | ReturnError> {
+    const cacheKey = `supervisor:${id}`;
+    const cacheData = await this.redisClient.get(cacheKey);
 
-    if (!supervisor) {
+    if (cacheData) {
+      return JSON.parse(cacheData);
+    }
+
+    const offset = (page - 1) * limit;
+
+    const supervisor = await supervisorRepository.fetchSupervisorById(id, limit, offset);
+
+    if (supervisor === null) {
       return errors.NOT_FOUND;
+    }
+
+    if (supervisor) {
+      await this.redisClient.set(cacheKey, JSON.stringify(supervisor));
     }
 
     return {

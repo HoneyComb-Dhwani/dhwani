@@ -1,7 +1,7 @@
 
 import type { ULID } from 'ulid';
 import type { NewSupervisor } from 'src/database';
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Query } from '@nestjs/common';
 import { SupervisorService } from './supervisor.service';
 
 @Controller('supervisors')
@@ -14,13 +14,13 @@ export class SupervisorController {
   }
 
   @Get('/')
-  async findAll() {
-    return this.supervisorService.getAllSupervisors();
+  async findAll(@Query('page') page: number, @Query('limit') limit: number) {
+    return this.supervisorService.getAllSupervisors(page, limit);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: ULID) {
-    return this.supervisorService.getSupervisorById(id);
+  async findOne(@Param('id') id: ULID, @Query('page') page: number, @Query('limit') limit: number) {
+    return this.supervisorService.getSupervisorById(id, page, limit);
   }
 
   @Put(':id')

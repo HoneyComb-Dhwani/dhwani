@@ -1,5 +1,5 @@
 import { db } from '../db';
-import { supervisors, hospitals } from '../schema';
+import { supervisors, hospitals, users } from '../schema';
 import { and, eq, sql } from 'drizzle-orm';
 import type { NewSupervisor, Supervisor } from '../types';
 import type { ULID } from 'ulid';
@@ -13,18 +13,42 @@ export class SupervisorRepository {
     return supervisor;
   }
 
-  async fetchAllSupervisors(): Promise<Supervisor[]> {
-    return db
-      .select()
+  async fetchAllSupervisors(limit: number, offset: number) {
+    const result = await db
+      .select({
+        id: supervisors.id,
+        userId: supervisors.userId,
+        userCode: supervisors.userCode,
+        hospitalId: supervisors.hospitalId,
+        createdAt: supervisors.createdAt,
+        updatedAt: supervisors.updatedAt,
+        deletedAt: supervisors.deletedAt,
+        isDeleted: supervisors.isDeleted,
+        hospitalName: hospitals.name,
+        hospitalCode: hospitals.code,
+        userEmail: users.email,
+        userRole: users.role,
+      })
       .from(supervisors)
-      .where(eq(supervisors.isDeleted, false));
+      .leftJoin(hospitals, eq(supervisors.hospitalId, hospitals.id))
+      .leftJoin(users, eq(supervisors.userId, users.id))
+      .where(eq(supervisors.isDeleted, false))
+      .limit(limit)
+      .offset(offset);
+
+    return result ?? null;
   }
 
-  async fetchSupervisorById(id: ULID): Promise<Supervisor | null> {
+  async fetchSupervisorById(id: ULID, limit: number, offset: number) {
     const [supervisor] = await db
       .select()
       .from(supervisors)
-      .where(and(eq(supervisors.id, id), eq(supervisors.isDeleted, false)));
+      .leftJoin(hospitals, eq(supervisors.hospitalId, hospitals.id))
+      .leftJoin(users, eq(supervisors.userId, users.id))
+      .where(and(eq(supervisors.id, id), eq(supervisors.isDeleted, false)))
+      .limit(limit)
+      .offset(offset);
+
     return supervisor ?? null;
   }
 
@@ -67,6 +91,7 @@ export class SupervisorRepository {
       })
       .where(and(eq(supervisors.id, id), eq(supervisors.isDeleted, false)))
       .returning();
+
     return supervisor ?? null;
   }
 
