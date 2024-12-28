@@ -40,4 +40,9 @@ export const errors: Record<string, ReturnError> = {
     message: 'Invalid Credentials',
     prettyMessage: 'The email or password you entered is incorrect.',
   },
+  NO_DATA_FOUND: {
+    status: 404,
+    message: 'No Data Found',
+    prettyMessage: 'No data found for the requested resource.',
+  },
 };

@@ -1,12 +1,12 @@
 import { db } from '../db';
 import { consultations, therapists, patients } from '../schema';
 import { and, eq, sql } from 'drizzle-orm';
-import type { Consultation } from '../types';
+import type { Consultation, NewConsultation } from '../types';
 import type { ULID } from 'ulid';
 
 export class ConsultationsRepository {
   async createConsultation(
-    consultationData: Consultation,
+    consultationData: NewConsultation,
   ): Promise<Consultation> {
     const [consultation] = await db
       .insert(consultations)
@@ -15,13 +15,82 @@ export class ConsultationsRepository {
     return consultation;
   }
 
-  async fetchAllConsultations() {
+  async fetchAllConsultations(limit: number, offset: number) {
     const result = db
       .select()
       .from(consultations)
       .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
       .leftJoin(patients, eq(consultations.patientId, patients.id))
-      .where(eq(consultations.isDeleted, false));
+      .where(eq(consultations.isDeleted, false))
+      .limit(limit)
+      .offset(offset);
+
+    return result ?? null;
+  }
+
+  async fetchConsultationsByHospitalId(
+    hospitalId: ULID,
+    limit: number,
+    offset: number,
+  ) {
+    const result = db
+      .select()
+      .from(consultations)
+      .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
+      .leftJoin(patients, eq(consultations.patientId, patients.id))
+      .where(
+        and(
+          eq(consultations.isDeleted, false),
+          eq(therapists.hospitalId, hospitalId),
+        ),
+      )
+      .limit(limit)
+      .offset(offset);
+
+    return result ?? null;
+  }
+
+  async fetchConsultationsByPatientId(
+    patientId: ULID,
+    limit: number,
+    offset: number,
+  ) {
+    const result = db
+      .select()
+      .from(consultations)
+      .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
+      .leftJoin(patients, eq(consultations.patientId, patients.id))
+      .where(
+        and(
+          eq(consultations.isDeleted, false),
+          eq(consultations.patientId, patientId),
+        ),
+      )
+      .limit(limit)
+      .offset(offset);
+
+    return result ?? null;
+  }
+
+  async fetchConsultationsByTherapistId(
+    therapistId: ULID,
+    limit: number,
+    offset: number,
+  ) {
+    const result = db
+      .select()
+      .from(consultations)
+      .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
+      .leftJoin(patients, eq(consultations.patientId, patients.id))
+      .where(
+        and(
+          eq(consultations.isDeleted, false),
+          eq(consultations.therapistId, therapistId),
+        ),
+      )
+      .limit(limit)
+      .offset(offset);
+
     return result ?? null;
   }
 
@@ -32,6 +101,7 @@ export class ConsultationsRepository {
       .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
       .leftJoin(patients, eq(consultations.patientId, patients.id))
       .where(and(eq(consultations.id, id), eq(consultations.isDeleted, false)));
+
     return consultation ?? null;
   }
 

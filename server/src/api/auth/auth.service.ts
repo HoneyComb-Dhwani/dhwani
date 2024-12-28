@@ -170,36 +170,4 @@ export class AuthService {
       },
     };
   }
-
-  async checkIfUserAdmin(
-    userCode: string,
-    hospitalCode: string,
-  ): Promise<boolean> {
-    let isAdmin = false;
-
-    const checkCachedAdmin = await this.redisClient.get(
-      `admin:${userCode + hospitalCode}`,
-    );
-
-    if (checkCachedAdmin) {
-      isAdmin = JSON.parse(checkCachedAdmin) as boolean;
-    } else {
-      const admin =
-        await supervisorRepository.fetchSupervisorByUserAndHospitalCode(
-          userCode,
-          hospitalCode,
-        );
-      if (admin) {
-        isAdmin = true;
-      }
-
-      await this.redisClient.setEx(
-        `admin:${userCode + hospitalCode}`,
-        3600,
-        JSON.stringify(isAdmin),
-      );
-
-      return isAdmin;
-    }
-  }
 }
