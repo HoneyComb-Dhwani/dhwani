@@ -13,11 +13,13 @@ export class HospitalRepository {
     return newHospital;
   }
 
-  async fetchAllHospitals() {
+  async fetchAllHospitals(limit: number, offset: number) {
     const allHospitals = await db
       .select()
       .from(hospitals)
-      .where(eq(hospitals.isDeleted, false));
+      .where(eq(hospitals.isDeleted, false))
+      .limit(limit)
+      .offset(offset);
 
     return allHospitals ?? null;
   }
@@ -50,7 +52,7 @@ export class HospitalRepository {
     return hospital ?? null;
   }
 
-  async fetchHospitalById(id: ULID) {
+  async fetchHospitalById(id: ULID, limit: number, offset: number) {
     const [hospital] = await db
       .select({
         id: hospitals.id,
@@ -73,7 +75,9 @@ export class HospitalRepository {
       })
       .from(hospitals)
       .leftJoin(addresses, eq(hospitals.addressId, addresses.id))
-      .where(and(eq(hospitals.id, id), eq(hospitals.isDeleted, false)));
+      .where(and(eq(hospitals.id, id), eq(hospitals.isDeleted, false)))
+      .limit(limit)
+      .offset(offset);
 
     return hospital ?? null;
   }
