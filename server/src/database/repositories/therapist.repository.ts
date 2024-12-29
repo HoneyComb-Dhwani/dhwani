@@ -1,6 +1,6 @@
 import { db } from '../db';
 import { therapists, hospitals, users } from '../schema/';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, ilike, or, sql } from 'drizzle-orm';
 import type { NewTherapist, Therapist } from '../types';
 import type { ULID } from 'ulid';
 
@@ -73,6 +73,41 @@ export class TherapistRepository {
       .limit(1);
 
     return therapist ?? null;
+  }
+
+  async fetchTherapistsByUserNameAndHospitalName(params: {
+    username?: string | null;
+    hospitalName?: string | null;
+  }) {
+
+    const baseConditions = [eq(therapists.isDeleted, false)];
+
+    if (params.username) {
+      baseConditions.push(
+        or(
+          ilike(users.name, `%${params.username}%`),
+        )
+      );
+    }
+
+    if (params.hospitalName) {
+      baseConditions.push(
+        ilike(hospitals.name, `%${params.hospitalName}%`)
+      );
+    }
+
+    const result = await db
+      .select()
+      .from(therapists)
+      .innerJoin(hospitals, eq(therapists.hospitalId, hospitals.id))
+      .innerJoin(users, eq(therapists.userId, users.id))
+      .where(and(...baseConditions));
+
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result;
   }
 
   async updateTherapist(
