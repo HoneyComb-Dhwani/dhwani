@@ -27,12 +27,8 @@ export class HospitalController {
   }
 
   @Get(':id')
-  async findOne(
-    @Param('id') id: ULID,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-  ) {
-    return this.hospitalsService.getHospitalById(id, page, limit);
+  async findOne(@Param('id') id: ULID) {
+    return this.hospitalsService.getHospitalById(id);
   }
 
   @Put(':id')

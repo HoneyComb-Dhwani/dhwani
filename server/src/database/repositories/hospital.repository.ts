@@ -52,7 +52,7 @@ export class HospitalRepository {
     return hospital ?? null;
   }
 
-  async fetchHospitalById(id: ULID, limit: number, offset: number) {
+  async fetchHospitalById(id: ULID) {
     const [hospital] = await db
       .select({
         id: hospitals.id,
@@ -76,8 +76,6 @@ export class HospitalRepository {
       .from(hospitals)
       .leftJoin(addresses, eq(hospitals.addressId, addresses.id))
       .where(and(eq(hospitals.id, id), eq(hospitals.isDeleted, false)))
-      .limit(limit)
-      .offset(offset);
 
     return hospital ?? null;
   }
