@@ -45,4 +45,9 @@ export const errors: Record<string, ReturnError> = {
     message: 'No Data Found',
     prettyMessage: 'No data found for the requested resource.',
   },
+  CONSULTATION_DOES_NOT_EXIST: {
+    status: 404,
+    message: 'Consultation does not exist',
+    prettyMessage: 'The consultation does not exist.',
+  },
 };

@@ -86,8 +86,26 @@ export class ConsultationsRepository {
     return result ?? null;
   }
 
+  async fetchConsultationByPatientIdAndTherapistId(
+    patientId: ULID,
+    therapistId: ULID,
+  ) {
+    const [consultation] = await db
+      .select()
+      .from(consultations)
+      .where(
+        and(
+          eq(consultations.isDeleted, false),
+          eq(consultations.patientId, patientId),
+          eq(consultations.therapistId, therapistId),
+        ),
+      );
+
+    return consultation ?? null;
+  }
+
   async fetchConsultationById(id: ULID) {
-    const consultation = await db
+    const [consultation] = await db
       .select({
         id: consultations.id,
         patientId: consultations.patientId,

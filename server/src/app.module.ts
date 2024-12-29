@@ -7,6 +7,7 @@ import { ConsultationsModule } from './api/routes/consultations/consultations.mo
 import { SupervisorsModule } from './api/routes/supervisors/supervisor.module';
 import { PatientsModule } from './api/routes/patients/patients.module';
 import { HospitalsModule } from './api/routes/hospitals/hospitals.module';
+import { SessionsModule } from './api/routes/sessions/sessions.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { HospitalsModule } from './api/routes/hospitals/hospitals.module';
     SupervisorsModule,
     PatientsModule,
     HospitalsModule,
+    SessionsModule
   ],
   controllers: [AppController],
   providers: [AppService],
