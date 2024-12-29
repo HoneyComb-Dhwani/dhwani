@@ -6,6 +6,7 @@ import { AuthModule } from './api/routes/auth/auth.module';
 import { ConsultationsModule } from './api/routes/consultations/consultations.module';
 import { SupervisorsModule } from './api/routes/supervisors/supervisor.module';
 import { PatientsModule } from './api/routes/patients/patients.module';
+import { HospitalsModule } from './api/routes/hospitals/hospitals.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PatientsModule } from './api/routes/patients/patients.module';
     ConsultationsModule,
     SupervisorsModule,
     PatientsModule,
+    HospitalsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
