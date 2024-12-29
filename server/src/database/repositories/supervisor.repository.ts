@@ -24,7 +24,7 @@ export class SupervisorRepository {
     return result ?? null;
   }
 
-  async fetchSupervisorById(id: ULID, limit: number, offset: number) {
+  async fetchSupervisorById(id: ULID) {
     const [supervisor] = await db
       .select({
         id: supervisors.id,
@@ -44,9 +44,7 @@ export class SupervisorRepository {
       .leftJoin(hospitals, eq(supervisors.hospitalId, hospitals.id))
       .leftJoin(users, eq(supervisors.userId, users.id))
       .where(and(eq(supervisors.id, id), eq(supervisors.isDeleted, false)))
-      .limit(limit)
-      .offset(offset);
-
+      
     return supervisor ?? null;
   }
 

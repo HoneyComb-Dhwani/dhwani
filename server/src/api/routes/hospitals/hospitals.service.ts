@@ -4,6 +4,8 @@ import { NewHospital } from 'src/database';
 import { errors, ReturnError, ReturnResponse } from '../../constants';
 import { hospitalRepository } from 'src/database/repositories/hospital.repository';
 import { ULID } from 'ULID';
+import { CreateHospital } from './dto';
+import { addressRepository } from 'src/database/repositories/address.repository';
 
 @Injectable()
 export class HospitalService {
@@ -12,9 +14,20 @@ export class HospitalService {
   ) {}
 
   async createHospital(
-    body: NewHospital,
+    body: CreateHospital,
   ): Promise<ReturnResponse | ReturnError> {
-    const hospital = await hospitalRepository.createHospital(body);
+    const createAddress = await addressRepository.insertAddress(body.address)
+
+    if (!createAddress) {
+      return errors.INTERNAL_SERVER_ERROR;
+    }
+
+    const hospital = await hospitalRepository.createHospital({
+      name: body.name,
+      addressId: createAddress.id,
+      phoneNumber: body.phoneNumber,
+      code: body.code,
+    });
 
     if (!hospital) {
       return errors.INTERNAL_SERVER_ERROR;
@@ -27,7 +40,7 @@ export class HospitalService {
     };
   }
 
-  async getAllHospitals(
+  async fetchAllHospitals(
     page: number,
     limit: number,
   ): Promise<ReturnResponse | ReturnError> {
@@ -63,10 +76,8 @@ export class HospitalService {
     };
   }
 
-  async getHospitalById(
+  async fetchHospitalById(
     id: ULID,
-    page: number,
-    limit: number,
   ): Promise<ReturnResponse | ReturnError> {
     const cacheKey = `hospital:${id}`;
     const cacheData = await this.redisClient.get(cacheKey);
@@ -80,12 +91,8 @@ export class HospitalService {
       };
     }
 
-    const offset = (page - 1) * limit;
-
     const hospital = await hospitalRepository.fetchHospitalById(
       id,
-      limit,
-      offset,
     );
 
     if (!hospital) {

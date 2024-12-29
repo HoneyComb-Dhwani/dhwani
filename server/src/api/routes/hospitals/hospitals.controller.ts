@@ -11,24 +11,25 @@ import {
 import { NewHospital } from 'src/database';
 import { HospitalService } from './hospitals.service';
 import { ULID } from 'ulid';
+import { CreateHospital } from './dto';
 
 @Controller('hospitals')
 export class HospitalController {
   constructor(private readonly hospitalsService: HospitalService) {}
 
   @Post('/')
-  async create(@Body() body: NewHospital) {
+  async create(@Body() body: CreateHospital) {
     return this.hospitalsService.createHospital(body);
   }
 
   @Get('/')
   async findAll(@Query('page') page: number, @Query('limit') limit: number) {
-    return this.hospitalsService.getAllHospitals(page, limit);
+    return this.hospitalsService.fetchAllHospitals(page, limit);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: ULID) {
-    return this.hospitalsService.getHospitalById(id);
+    return this.hospitalsService.fetchHospitalById(id);
   }
 
   @Put(':id')

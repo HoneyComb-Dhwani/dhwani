@@ -23,16 +23,14 @@ export class SupervisorController {
 
   @Get('/')
   async findAll(@Query('page') page: number, @Query('limit') limit: number) {
-    return this.supervisorService.getAllSupervisors(page, limit);
+    return this.supervisorService.fetchAllSupervisors(page, limit);
   }
 
   @Get(':id')
   async findOne(
     @Param('id') id: ULID,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
   ) {
-    return this.supervisorService.getSupervisorById(id, page, limit);
+    return this.supervisorService.fetchSupervisorById(id);
   }
 
   @Put(':id')

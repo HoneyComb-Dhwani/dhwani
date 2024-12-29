@@ -13,7 +13,6 @@ import { therapists } from './schema/therapists';
 export const ulidType = customType<{
   data: ULID;
   notNull: true;
-  default: true;
 }>({
   dataType() {
     return 'char(26)';

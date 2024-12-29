@@ -11,6 +11,7 @@ export class AddressRepository {
       .insert(addresses)
       .values(addressData)
       .returning();
+      
     return address;
   }
 

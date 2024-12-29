@@ -22,7 +22,6 @@ const Info = () => {
 
     return (
         <div className="space-y-8">
-            {/* Header Section */}
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900">My Treatment Dashboard</h1>
@@ -33,7 +32,6 @@ const Info = () => {
                 </button>
             </div>
 
-            {/* Therapist Card */}
             <div className="bg-white p-6 rounded-xl shadow-md">
                 <div className="flex items-center justify-between">
                     <div>
@@ -52,7 +50,6 @@ const Info = () => {
                 </div>
             </div>
 
-            {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((stat) => (
                     <div key={stat.id} className="bg-white p-6 rounded-xl shadow-md transform transition duration-300 hover:scale-105">
@@ -68,7 +65,6 @@ const Info = () => {
                 ))}
             </div>
 
-            {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Session History */}
                 <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
@@ -100,7 +96,6 @@ const Info = () => {
                     </div>
                 </div>
 
-                {/* Treatment Tasks */}
                 <div className="bg-white p-6 rounded-xl shadow-md">
                     <h2 className="text-xl font-semibold text-gray-900 mb-6">Treatment Tasks</h2>
                     <div className="space-y-4">
@@ -119,7 +114,6 @@ const Info = () => {
                 </div>
             </div>
 
-            {/* Bottom Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Treatment Progress */}
                 <div className="bg-white p-6 rounded-xl shadow-md">
@@ -138,7 +132,6 @@ const Info = () => {
                     </div>
                 </div>
 
-                {/* Session Notes */}
                 <div className="bg-white p-6 rounded-xl shadow-md">
                     <h2 className="text-xl font-semibold text-gray-900 mb-6">Latest Session Notes</h2>
                     <div className="space-y-4">
