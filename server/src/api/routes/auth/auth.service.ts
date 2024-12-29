@@ -12,7 +12,7 @@ import { therapistRepository } from 'src/database/repositories/therapist.reposit
 export class AuthService {
   constructor(
     @Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType,
-  ) {}
+  ) { }
 
   async register(body: RegisterDto): Promise<ReturnResponse | ReturnError> {
     const { name, email, password } = body;
@@ -36,7 +36,7 @@ export class AuthService {
 
     return {
       status: 201,
-      message: 'Created',
+      message: 'OK',
       prettyMessage: 'User created successfully',
     };
   }
@@ -49,6 +49,10 @@ export class AuthService {
 
     if (getUserFromCache) {
       user = JSON.parse(getUserFromCache) as User;
+      const isValidPassword = await comparePassword(password, user.hashPassword);
+      if (!isValidPassword) {
+        return errors.INVALID_CREDENTIALS;
+      }
     } else {
       user = await userRepository.fetchUserByEmail(email);
 
@@ -99,6 +103,11 @@ export class AuthService {
 
     if (cachedWorker) {
       worker = JSON.parse(cachedWorker) as WorkerInfo;
+
+      const isValidPassword = await comparePassword(password, worker.userHashPassword);
+      if (!isValidPassword) {
+        return errors.INVALID_CREDENTIALS;
+      }
     } else {
       worker =
         (await supervisorRepository.fetchSupervisorByUserAndHospitalCode(
