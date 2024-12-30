@@ -1,8 +1,8 @@
+import type { NewTherapist, Therapist } from '../types';
+import type { ULID } from 'ulid';
 import { db } from '../db';
 import { therapists, hospitals, users } from '../schema/';
 import { and, eq, ilike, or, sql } from 'drizzle-orm';
-import type { NewTherapist, Therapist } from '../types';
-import type { ULID } from 'ulid';
 
 export class TherapistRepository {
   async insertTherapist(therapistData: NewTherapist): Promise<Therapist> {
@@ -13,8 +13,16 @@ export class TherapistRepository {
     return therapist;
   }
 
-  async fetchAllTherapists(): Promise<Therapist[]> {
-    return db.select().from(therapists).where(eq(therapists.isDeleted, false));
+  async fetchAllTherapists(
+    limit: number,
+    offset: number,
+  ): Promise<Therapist[]> {
+    return db
+      .select()
+      .from(therapists)
+      .where(eq(therapists.isDeleted, false))
+      .limit(limit)
+      .offset(offset);
   }
 
   async fetchTherapistById(id: ULID): Promise<Therapist | null> {
@@ -27,6 +35,8 @@ export class TherapistRepository {
 
   async fetchTherapistByHospitalId(
     hospitalId: ULID,
+    limit: number,
+    offset: number,
   ): Promise<Therapist | null> {
     const [therapist] = await db
       .select()
@@ -36,7 +46,10 @@ export class TherapistRepository {
           eq(therapists.hospitalId, hospitalId),
           eq(therapists.isDeleted, false),
         ),
-      );
+      )
+      .limit(limit)
+      .offset(offset);
+
     return therapist ?? null;
   }
 
@@ -79,21 +92,14 @@ export class TherapistRepository {
     username?: string | null;
     hospitalName?: string | null;
   }) {
-
     const baseConditions = [eq(therapists.isDeleted, false)];
 
     if (params.username) {
-      baseConditions.push(
-        or(
-          ilike(users.name, `%${params.username}%`),
-        )
-      );
+      baseConditions.push(or(ilike(users.name, `%${params.username}%`)));
     }
 
     if (params.hospitalName) {
-      baseConditions.push(
-        ilike(hospitals.name, `%${params.hospitalName}%`)
-      );
+      baseConditions.push(ilike(hospitals.name, `%${params.hospitalName}%`));
     }
 
     const result = await db

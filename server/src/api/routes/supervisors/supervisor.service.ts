@@ -66,9 +66,7 @@ export class SupervisorService {
     };
   }
 
-  async fetchSupervisorById(
-    id: ULID,
-  ): Promise<ReturnResponse | ReturnError> {
+  async fetchSupervisorById(id: ULID): Promise<ReturnResponse | ReturnError> {
     const cacheKey = `supervisor:${id}`;
     const cacheData = await this.redisClient.get(cacheKey);
 
@@ -81,9 +79,7 @@ export class SupervisorService {
       };
     }
 
-    const supervisor = await supervisorRepository.fetchSupervisorById(
-      id,
-    );
+    const supervisor = await supervisorRepository.fetchSupervisorById(id);
 
     if (supervisor === null) {
       return errors.NOT_FOUND;

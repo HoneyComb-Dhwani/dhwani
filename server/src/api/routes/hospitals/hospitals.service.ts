@@ -16,7 +16,7 @@ export class HospitalService {
   async createHospital(
     body: CreateHospital,
   ): Promise<ReturnResponse | ReturnError> {
-    const createAddress = await addressRepository.insertAddress(body.address)
+    const createAddress = await addressRepository.insertAddress(body.address);
 
     if (!createAddress) {
       return errors.INTERNAL_SERVER_ERROR;
@@ -76,9 +76,7 @@ export class HospitalService {
     };
   }
 
-  async fetchHospitalById(
-    id: ULID,
-  ): Promise<ReturnResponse | ReturnError> {
+  async fetchHospitalById(id: ULID): Promise<ReturnResponse | ReturnError> {
     const cacheKey = `hospital:${id}`;
     const cacheData = await this.redisClient.get(cacheKey);
 
@@ -91,9 +89,7 @@ export class HospitalService {
       };
     }
 
-    const hospital = await hospitalRepository.fetchHospitalById(
-      id,
-    );
+    const hospital = await hospitalRepository.fetchHospitalById(id);
 
     if (!hospital) {
       return errors.NOT_FOUND;

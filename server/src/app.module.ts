@@ -8,6 +8,7 @@ import { SupervisorsModule } from './api/routes/supervisors/supervisor.module';
 import { PatientsModule } from './api/routes/patients/patients.module';
 import { HospitalsModule } from './api/routes/hospitals/hospitals.module';
 import { SessionsModule } from './api/routes/sessions/sessions.module';
+import { TherapistsModule } from './api/routes/therapists/therapists.module';
 
 @Module({
   imports: [
@@ -17,9 +18,10 @@ import { SessionsModule } from './api/routes/sessions/sessions.module';
     AuthModule,
     ConsultationsModule,
     SupervisorsModule,
+    TherapistsModule,
     PatientsModule,
     HospitalsModule,
-    SessionsModule
+    SessionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

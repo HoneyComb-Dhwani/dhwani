@@ -1,6 +1,6 @@
 import type { RedisClientType } from 'redis';
 import type { RegisterDto, LoginDto, WorkLoginDto, WorkerInfo } from './dto';
-import type { Supervisor, Therapist, User } from 'src/database';
+import type { User } from 'src/database';
 import { Inject, Injectable } from '@nestjs/common';
 import { comparePassword, hashPassword, signJwt } from '../../utils';
 import { errors, type ReturnError, type ReturnResponse } from '../../constants';
@@ -12,7 +12,7 @@ import { therapistRepository } from 'src/database/repositories/therapist.reposit
 export class AuthService {
   constructor(
     @Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType,
-  ) { }
+  ) {}
 
   async register(body: RegisterDto): Promise<ReturnResponse | ReturnError> {
     const { name, email, password } = body;
@@ -44,12 +44,15 @@ export class AuthService {
   async login(body: LoginDto): Promise<ReturnResponse | ReturnError> {
     const { email, password } = body;
 
-    let user: User;
+    let user: User | null;
     const getUserFromCache = await this.redisClient.get(`user:${email}`);
 
     if (getUserFromCache) {
       user = JSON.parse(getUserFromCache) as User;
-      const isValidPassword = await comparePassword(password, user.hashPassword);
+      const isValidPassword = await comparePassword(
+        password,
+        user.hashPassword,
+      );
       if (!isValidPassword) {
         return errors.INVALID_CREDENTIALS;
       }
@@ -104,7 +107,10 @@ export class AuthService {
     if (cachedWorker) {
       worker = JSON.parse(cachedWorker) as WorkerInfo;
 
-      const isValidPassword = await comparePassword(password, worker.userHashPassword);
+      const isValidPassword = await comparePassword(
+        password,
+        worker.userHashPassword,
+      );
       if (!isValidPassword) {
         return errors.INVALID_CREDENTIALS;
       }
@@ -130,7 +136,10 @@ export class AuthService {
       );
     }
 
-    const isValidPassword = await comparePassword(password, worker.userHashPassword);
+    const isValidPassword = await comparePassword(
+      password,
+      worker.userHashPassword,
+    );
 
     if (!isValidPassword) {
       return errors.INVALID_CREDENTIALS;

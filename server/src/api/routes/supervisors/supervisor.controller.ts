@@ -27,9 +27,7 @@ export class SupervisorController {
   }
 
   @Get(':id')
-  async findOne(
-    @Param('id') id: ULID,
-  ) {
+  async findOne(@Param('id') id: ULID) {
     return this.supervisorService.fetchSupervisorById(id);
   }
 

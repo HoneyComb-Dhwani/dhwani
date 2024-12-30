@@ -75,7 +75,7 @@ export class HospitalRepository {
       })
       .from(hospitals)
       .leftJoin(addresses, eq(hospitals.addressId, addresses.id))
-      .where(and(eq(hospitals.id, id), eq(hospitals.isDeleted, false)))
+      .where(and(eq(hospitals.id, id), eq(hospitals.isDeleted, false)));
 
     return hospital ?? null;
   }

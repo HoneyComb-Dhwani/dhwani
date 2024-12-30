@@ -3,7 +3,9 @@ import { RedisClientType } from 'redis';
 
 @Injectable()
 export class RedisService implements OnApplicationShutdown {
-  constructor(@Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType) {}
+  constructor(
+    @Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType,
+  ) {}
 
   async onApplicationShutdown(): Promise<void> {
     if (this.redisClient.isOpen) {

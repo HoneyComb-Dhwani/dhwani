@@ -23,29 +23,44 @@ export class SessionRepository {
     return result ?? null;
   }
 
-  async fetchAllSessionsByPatientId(patientId: ULID, limit: number, offset: number) {
+  async fetchAllSessionsByPatientId(
+    patientId: ULID,
+    limit: number,
+    offset: number,
+  ) {
     const result = await db
       .select()
       .from(sessions)
       .leftJoin(therapists, eq(sessions.therapistId, therapists.id))
       .leftJoin(patients, eq(sessions.patientId, patients.id))
-      .where(and(eq(sessions.patientId, patientId), eq(sessions.isDeleted, false)))
+      .where(
+        and(eq(sessions.patientId, patientId), eq(sessions.isDeleted, false)),
+      )
       .limit(limit)
       .offset(offset);
-      
+
     return result ?? null;
   }
 
-  async fetchAllSessionsByTherapistId(therapistId: ULID, limit: number, offset: number) {
+  async fetchAllSessionsByTherapistId(
+    therapistId: ULID,
+    limit: number,
+    offset: number,
+  ) {
     const result = await db
       .select()
       .from(sessions)
       .leftJoin(therapists, eq(sessions.therapistId, therapists.id))
       .leftJoin(patients, eq(sessions.patientId, patients.id))
-      .where(and(eq(sessions.therapistId, therapistId), eq(sessions.isDeleted, false)))
+      .where(
+        and(
+          eq(sessions.therapistId, therapistId),
+          eq(sessions.isDeleted, false),
+        ),
+      )
       .limit(limit)
       .offset(offset);
-      
+
     return result ?? null;
   }
 
@@ -55,7 +70,7 @@ export class SessionRepository {
       .from(sessions)
       .leftJoin(therapists, eq(sessions.therapistId, therapists.id))
       .leftJoin(patients, eq(sessions.patientId, patients.id))
-      .where(and(eq(sessions.id, id), eq(sessions.isDeleted, false)))
+      .where(and(eq(sessions.id, id), eq(sessions.isDeleted, false)));
 
     return result ?? null;
   }

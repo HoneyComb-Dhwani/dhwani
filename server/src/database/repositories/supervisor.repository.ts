@@ -43,8 +43,8 @@ export class SupervisorRepository {
       .from(supervisors)
       .leftJoin(hospitals, eq(supervisors.hospitalId, hospitals.id))
       .leftJoin(users, eq(supervisors.userId, users.id))
-      .where(and(eq(supervisors.id, id), eq(supervisors.isDeleted, false)))
-      
+      .where(and(eq(supervisors.id, id), eq(supervisors.isDeleted, false)));
+
     return supervisor ?? null;
   }
 

@@ -34,7 +34,7 @@ describe('Overall Application test', () => {
               status: 'UP',
               uptime: expect.any(Number),
               timestamp: expect.any(Number),
-            })
+            }),
           );
         });
     });
