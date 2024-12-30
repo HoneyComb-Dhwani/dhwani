@@ -16,8 +16,38 @@ export class PatientsRepository {
 
   async fetchAllPatients(limit: number, offset: number) {
     const patientsList = await db
-      .select()
+      .select({
+        id: patients.id,
+        hospitalId: patients.hospitalId,
+        hospitalName: hospitals.name,
+        userId: patients.userId,
+        userName: users.name,
+        details: {
+          firstName: patients.firstName,
+          middleName: patients.middleName,
+          lastName: patients.lastName,
+          email: patients.email,
+          phoneNumber: patients.phoneNumber,
+          dateOfBirth: patients.dateOfBirth,
+        },
+        address: {
+          id: addresses.id,
+          houseNumber: addresses.houseNumber,
+          blockNumber: addresses.blockNumber,
+          street: addresses.street,
+          city: addresses.city,
+          state: addresses.state,
+          country: addresses.country,
+          postalCode: addresses.postalCode,
+        },
+        emergencyContactName: patients.emergencyContactName,
+        emergencyContactPhone: patients.emergencyContactPhone,
+        createdAt: patients.createdAt
+      })
       .from(patients)
+      .leftJoin(hospitals, eq(patients.hospitalId, hospitals.id))
+      .leftJoin(users, eq(patients.userId, users.id))
+      .leftJoin(addresses, eq(patients.addressId, addresses.id))
       .where(eq(patients.isDeleted, false))
       .limit(limit)
       .offset(offset);

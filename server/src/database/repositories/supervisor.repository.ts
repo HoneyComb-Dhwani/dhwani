@@ -15,8 +15,21 @@ export class SupervisorRepository {
 
   async fetchAllSupervisors(limit: number, offset: number) {
     const result = await db
-      .select()
+      .select({
+        id: supervisors.id,
+        userId: supervisors.userId,
+        userName: users.name,
+        userEmail: users.email,
+        userRole: users.role,
+        userCode: supervisors.userCode,
+        hospitalName: hospitals.name,
+        hospitalCode: hospitals.code,
+        hospitalId: supervisors.hospitalId,
+        createdAt: supervisors.createdAt
+      })
       .from(supervisors)
+      .leftJoin(hospitals, eq(supervisors.hospitalId, hospitals.id))
+      .leftJoin(users, eq(supervisors.userId, users.id))
       .where(eq(supervisors.isDeleted, false))
       .limit(limit)
       .offset(offset);

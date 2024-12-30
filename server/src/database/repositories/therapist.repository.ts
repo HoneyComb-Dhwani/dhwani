@@ -1,7 +1,7 @@
 import type { NewTherapist, Therapist } from '../types';
 import type { ULID } from 'ulid';
 import { db } from '../db';
-import { therapists, hospitals, users } from '../schema/';
+import { therapists, hospitals, users, addresses } from '../schema/';
 import { and, eq, ilike, or, sql } from 'drizzle-orm';
 
 export class TherapistRepository {
@@ -16,10 +16,36 @@ export class TherapistRepository {
   async fetchAllTherapists(
     limit: number,
     offset: number,
-  ): Promise<Therapist[]> {
+  ) {
     return db
-      .select()
+      .select({
+        id: therapists.id,
+        userId: therapists.userId,
+        userRole: users.role,
+        hospitalId: therapists.hospitalId,
+        hospitalName: hospitals.name,
+        hospitalCode: hospitals.code,
+        userCode: therapists.userCode,
+        firstName: therapists.firstName,
+        middleName: therapists.middleName,
+        lastName: therapists.lastName,
+        email: therapists.email,
+        phoneNumber: therapists.phoneNumber,
+        address: {
+          houseNumber: addresses.houseNumber,
+          blockNumber: addresses.blockNumber,
+          street: addresses.street,
+          city: addresses.city,
+          state: addresses.state,
+          country: addresses.country,
+          postalCode: addresses.postalCode
+        },
+        createdAt: therapists.createdAt,
+      })
       .from(therapists)
+      .leftJoin(users, eq(therapists.userId, users.id))
+      .leftJoin(addresses, eq(therapists.addressId, addresses.id))
+      .leftJoin(hospitals, eq(therapists.hospitalId, hospitals.id))
       .where(eq(therapists.isDeleted, false))
       .limit(limit)
       .offset(offset);
