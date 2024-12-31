@@ -1,10 +1,10 @@
+import type { NewAddress, NewHospital } from 'src/database';
+import type { RedisClientType } from 'redis';
 import { Injectable, Inject } from '@nestjs/common';
-import { RedisClientType } from 'redis';
-import { NewHospital } from 'src/database';
 import { errors, ReturnError, ReturnResponse } from '../../constants';
 import { hospitalRepository } from 'src/database/repositories/hospital.repository';
 import { ULID } from 'ULID';
-import { CreateHospital } from './dto';
+import { CreateHospitalDto } from './dto';
 import { addressRepository } from 'src/database/repositories/address.repository';
 
 @Injectable()
@@ -14,9 +14,9 @@ export class HospitalService {
   ) {}
 
   async createHospital(
-    body: CreateHospital,
+    body: CreateHospitalDto,
   ): Promise<ReturnResponse | ReturnError> {
-    const createAddress = await addressRepository.insertAddress(body.address);
+    const createAddress = await addressRepository.insertAddress(body.address as NewAddress);
 
     if (!createAddress) {
       return errors.INTERNAL_SERVER_ERROR;

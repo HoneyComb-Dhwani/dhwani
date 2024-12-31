@@ -11,14 +11,14 @@ import {
 import { NewHospital } from 'src/database';
 import { HospitalService } from './hospitals.service';
 import { ULID } from 'ulid';
-import { CreateHospital } from './dto';
+import { CreateHospitalDto } from './dto';
 
 @Controller('hospitals')
 export class HospitalController {
   constructor(private readonly hospitalsService: HospitalService) {}
 
   @Post('/')
-  async create(@Body() body: CreateHospital) {
+  async create(@Body() body: CreateHospitalDto) {
     return this.hospitalsService.createHospital(body);
   }
 

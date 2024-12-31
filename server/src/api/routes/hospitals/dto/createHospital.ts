@@ -1,14 +1,18 @@
-export type CreateHospital = {
-  name: string;
-  address: {
-    houseNumber?: string;
-    blockNumber?: string;
-    street?: string;
-    city: string;
-    state: string;
-    country: string;
-    postalCode: string;
-  };
-  phoneNumber: number;
-  code: string;
-};
+import { z } from 'zod';
+
+export const CreateHospitalSchema = z.object({
+  name: z.string(),
+  address: z.object({
+    houseNumber: z.string().optional(),
+    blockNumber: z.string().optional(),
+    street: z.string().optional(),
+    city: z.string(),
+    state: z.string(),
+    country: z.string(),
+    postalCode: z.string(),
+  }),
+  phoneNumber: z.number(),
+  code: z.string(),
+});
+
+export type CreateHospitalDto = z.infer<typeof CreateHospitalSchema>;
