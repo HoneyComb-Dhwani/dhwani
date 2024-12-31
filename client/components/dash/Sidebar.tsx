@@ -26,7 +26,7 @@ const adminMenuItems = [
     { icon: PlusCircleIcon, label: 'Add Supervisor', href: '/dashboard/admin/supervisors/new' },
     { icon: UsersIcon, label: 'Therapists', href: '/dashboard/admin/therapists' },
     { icon: UserIcon, label: 'Patients', href: '/dashboard/admin/patients' },
-    { icon: ClipboardIcon, label: 'Consultations', href: '/dashboard/admin/consultations' },
+    { icon: ClipboardIcon, label: 'Consultations', href: '/dashboard/user' },
     { icon: ClockIcon, label: 'Sessions', href: '/dashboard/admin/sessions' },
     { icon: MessageSquareIcon, label: 'Consultation Requests', href: '/dashboard/admin/consultation-requests' },
     { icon: ListIcon, label: 'Session Requests', href: '/dashboard/admin/session-requests' },
