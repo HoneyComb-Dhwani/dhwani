@@ -52,7 +52,8 @@ const therapistMenuItems = [
 
 const userMenuItems = [
     { icon: HomeIcon, label: 'Dashboard', href: '/dashboard' },
-    { icon: ClipboardIcon, label: 'My Consultations', href: '/dashboard/patient/consultations' },
+    { icon: ClipboardIcon, label: 'Book Consultation', href: '/dashboard/user/consultations/new' },
+    { icon: ClipboardIcon, label: 'My Consultations', href: '/dashboard/user/consultations' },
     { icon: ClockIcon, label: 'My Sessions', href: '/dashboard/user/sessions' },
     { icon: PlusCircleIcon, label: 'Request Session', href: '/dashboard/user/sessions/new' },
 ]
