@@ -1,7 +1,6 @@
 "use client"
 
 import Link from 'next/link';
-import { useState } from 'react';
 import { 
     HomeIcon, 
     ClipboardIcon,
@@ -26,7 +25,7 @@ const adminMenuItems = [
     { icon: PlusCircleIcon, label: 'Add Supervisor', href: '/dashboard/admin/supervisors/new' },
     { icon: UsersIcon, label: 'Therapists', href: '/dashboard/admin/therapists' },
     { icon: UserIcon, label: 'Patients', href: '/dashboard/admin/patients' },
-    { icon: ClipboardIcon, label: 'Consultations', href: '/dashboard/user' },
+    { icon: ClipboardIcon, label: 'Consultations', href: '/dashboard/admin/consultations' },
     { icon: ClockIcon, label: 'Sessions', href: '/dashboard/admin/sessions' },
     { icon: MessageSquareIcon, label: 'Consultation Requests', href: '/dashboard/admin/consultation-requests' },
     { icon: ListIcon, label: 'Session Requests', href: '/dashboard/admin/session-requests' },
@@ -34,12 +33,12 @@ const adminMenuItems = [
 
 const supervisorMenuItems = [
     { icon: HomeIcon, label: 'Dashboard', href: '/dashboard' },
-    { icon: UsersIcon, label: 'Therapists', href: '/dashboard/supervisor/therapists' },
-    { icon: UserPlusIcon, label: 'Add Therapist', href: '/dashboard/supervisor/therapists/new' },
-    { icon: ClipboardIcon, label: 'Consultations', href: '/dashboard/supervisor/consultations' },
-    { icon: MessageSquareIcon, label: 'Consultation Requests', href: '/dashboard/supervisor/consultation-requests' },
-    { icon: ClockIcon, label: 'Sessions', href: '/dashboard/supervisor/sessions' },
-    { icon: UserIcon, label: 'Patients', href: '/dashboard/supervisor/patients' },
+    { icon: UsersIcon, label: 'Therapists', href: '/dashboard/supervisors/therapists' },
+    { icon: UserPlusIcon, label: 'Add Therapist', href: '/dashboard/supervisors/therapists/new' },
+    { icon: UserIcon, label: 'Patients', href: '/dashboard/supervisors/patients' },
+    { icon: ClipboardIcon, label: 'Consultations', href: '/dashboard/supervisors/consultations' },
+    { icon: MessageSquareIcon, label: 'Consultation Requests', href: '/dashboard/supervisors/consultation-requests' },
+    { icon: ClockIcon, label: 'Sessions', href: '/dashboard/supervisors/sessions' },
 ];
 
 const therapistMenuItems = [
@@ -51,8 +50,15 @@ const therapistMenuItems = [
     { icon: ClipboardIcon, label: 'My Consultations', href: '/dashboard/therapist/consultations' },
 ];
 
+const userMenuItems = [
+    { icon: HomeIcon, label: 'Dashboard', href: '/dashboard' },
+    { icon: ClipboardIcon, label: 'My Consultations', href: '/dashboard/patient/consultations' },
+    { icon: ClockIcon, label: 'My Sessions', href: '/dashboard/user/sessions' },
+    { icon: PlusCircleIcon, label: 'Request Session', href: '/dashboard/user/sessions/new' },
+]
+
 interface SidebarProps {
-    userRole: 'admin' | 'supervisor' | 'therapist';
+    userRole: 'admin' | 'supervisor' | 'therapist' | 'user';
     isOpen: boolean;
     onToggle: () => void;
 }
@@ -68,6 +74,8 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, isOpen, onToggle }) => {
                 return supervisorMenuItems;
             case 'therapist':
                 return therapistMenuItems;
+            case 'user':
+                return userMenuItems;
             default:
                 return [];
         }
@@ -100,7 +108,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, isOpen, onToggle }) => {
             <div className="overflow-y-auto h-[calc(100vh-5rem)]">
                 <nav className="mt-6">
                     {getMenuItems().map((item) => (
-                        <a
+                        <Link
                             key={item.label}
                             href={item.href}
                             onClick={(e) => {
@@ -114,7 +122,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, isOpen, onToggle }) => {
                         >
                             <item.icon className="w-5 h-5 min-w-[20px]" />
                             {isOpen && <span className="ml-3">{item.label}</span>}
-                        </a>
+                        </Link>
                     ))}
                 </nav>
             </div>

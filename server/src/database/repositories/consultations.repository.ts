@@ -1,18 +1,74 @@
 import { db } from '../db';
-import { consultations, therapists, patients } from '../schema';
+import { consultations, therapists, patients, hospitals, addresses } from '../schema';
 import { and, eq, sql } from 'drizzle-orm';
-import type { Consultation, NewConsultation } from '../types';
+import type { CreateConsultationDto } from 'src/api/routes/consultations/dto';
+import type { Consultation, NewAddress } from '../types';
 import type { ULID } from 'ulid';
 
 export class ConsultationsRepository {
   async createConsultation(
-    consultationData: NewConsultation,
-  ): Promise<Consultation> {
-    const [consultation] = await db
-      .insert(consultations)
-      .values(consultationData)
-      .returning();
-    return consultation;
+    userId: ULID,
+    consultationData: CreateConsultationDto,
+  ): Promise<Consultation | null> {
+    const insertConsultation = await db.transaction(async (tx) => {
+      const checkHospital = await tx
+        .select()
+        .from(hospitals)
+        .where(eq(hospitals.id, consultationData.hospital.id));
+
+      if (checkHospital.length === 0) {
+        return null;
+      }
+
+      const [insertAddress] = await tx
+        .insert(addresses)
+        .values(consultationData.address as NewAddress)
+        .returning();
+
+      if (!insertAddress) {
+        return null;
+      }
+
+      const patientData = {
+        userId,
+        addressId: insertAddress.id,
+        hospitalId: consultationData.hospital.id,
+        firstName: consultationData.details.firstName,
+        lastName: consultationData.details.lastName,
+        email: consultationData.details.email,
+        phoneNumber: consultationData.details.phoneNumber || '',
+        dateOfBirth: new Date(consultationData.details.dateOfBirth),
+        gender: consultationData.details.gender as 'Male' | 'Female' | 'Other',
+        emergencyContactName: consultationData.emergencyContactName,
+        emergencyContactPhone: consultationData.emergencyContactPhone,
+        middleName: consultationData.details.middleName,
+      }
+
+      const [insertPatient] = await tx
+        .insert(patients)
+        .values(patientData)
+        .returning();
+
+      if (!insertPatient) {
+        return null;
+      }
+
+      const consultData = {
+        patientId: insertPatient[0].id,
+        status: 'pending',
+      }
+
+      const [insertConsultation] = await tx
+        .insert(consultations)
+        .values(consultData)
+        .returning();
+
+      if (!insertConsultation) {
+        return null;
+      }
+    })
+
+    return insertConsultation ?? null;
   }
 
   async fetchAllConsultations(limit: number, offset: number) {

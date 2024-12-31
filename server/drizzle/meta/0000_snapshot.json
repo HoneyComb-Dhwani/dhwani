@@ -1,5 +1,5 @@
 {
-  "id": "1e67c50d-5c42-4c8f-a616-164456bf5723",
+  "id": "5f2630b4-9a68-4d2e-b5d8-ea84a6402245",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -112,19 +112,28 @@
           "name": "therapist_id",
           "type": "char(26)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": null
+        },
+        "status": {
+          "name": "status",
+          "type": "status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
         },
         "diagnosis": {
           "name": "diagnosis",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "treatment_plan": {
           "name": "treatment_plan",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "final_report_url": {
           "name": "final_report_url",
@@ -862,6 +871,15 @@
     }
   },
   "enums": {
+    "public.status": {
+      "name": "status",
+      "schema": "public",
+      "values": [
+        "pending",
+        "completed",
+        "cancelled"
+      ]
+    },
     "public.roleEnums": {
       "name": "roleEnums",
       "schema": "public",

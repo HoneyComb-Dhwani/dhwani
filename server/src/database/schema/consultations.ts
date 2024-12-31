@@ -1,8 +1,10 @@
-import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { boolean, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 import { ulidType } from '../types';
 import { ULID, ulid } from 'ulid';
 import { patients } from './patients';
 import { therapists } from './therapists';
+
+export const statusEnums = pgEnum('status', ['pending', 'completed', 'cancelled']);
 
 export const consultations = pgTable('consultations', {
   id: ulidType('id')
@@ -13,9 +15,10 @@ export const consultations = pgTable('consultations', {
   ),
   therapistId: ulidType('therapist_id', { foreignKey: true }).references(
     () => therapists.id,
-  ),
-  diagnosis: text('diagnosis').notNull(),
-  treatmentPlan: text('treatment_plan').notNull(),
+  ).notNull().default(null),
+  status: statusEnums('status').notNull().default('pending'),
+  diagnosis: text('diagnosis'),
+  treatmentPlan: text('treatment_plan'),
   finalReportUrl: text('final_report_url'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),

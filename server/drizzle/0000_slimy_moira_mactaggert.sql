@@ -1,3 +1,4 @@
+CREATE TYPE "public"."status" AS ENUM('pending', 'completed', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."roleEnums" AS ENUM('USER', 'THERAPIST', 'SUPERVISOR', 'ADMIN');--> statement-breakpoint
 CREATE TYPE "public"."genderEnum" AS ENUM('Male', 'Female', 'Other');--> statement-breakpoint
 CREATE TABLE "addresses" (
@@ -18,9 +19,10 @@ CREATE TABLE "addresses" (
 CREATE TABLE "consultations" (
 	"id" char(26) PRIMARY KEY NOT NULL,
 	"patient_id" char(26),
-	"therapist_id" char(26),
-	"diagnosis" text NOT NULL,
-	"treatment_plan" text NOT NULL,
+	"therapist_id" char(26) DEFAULT null NOT NULL,
+	"status" "status" DEFAULT 'pending' NOT NULL,
+	"diagnosis" text,
+	"treatment_plan" text,
 	"final_report_url" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,

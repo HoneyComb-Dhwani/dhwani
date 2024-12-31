@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { ulid } from "ulid";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 
 interface Address {
+  houseNumber?: string;
+  blockNumber?: string;
+  street?: string;
   state: string;
   city: string;
   country: string;
@@ -13,7 +15,7 @@ interface Address {
 }
 
 interface Hospital {
-  hospitalid: string;
+  id: string;
   name: string;
   address: Address;
   phoneNumber: number;
@@ -30,7 +32,6 @@ interface PersonalDetails {
 }
 
 interface FormData {
-  patientId: string;
   hospital: Hospital | null;
   details: PersonalDetails;
   address: Address;
@@ -40,34 +41,37 @@ interface FormData {
 
 const hospitals: Hospital[] = [
   {
-    hospitalid: "1",
-    name: "City General Hospital",
-    address: {
-      state: "NY",
-      city: "New York",
-      country: "USA",
-      postalCode: "10001",
-    },
+    id: '1',
+    name: 'City General Hospital',
+    code: 'CGH001',
     phoneNumber: 1234567890,
-    code: "CGH001",
+    address: {
+      houseNumber: '123',
+      street: 'Medical Lane',
+      city: 'New York',
+      state: 'NY',
+      country: 'USA',
+      postalCode: '10001'
+    }
   },
   {
-    hospitalid: "2",
-    name: "Central Medical Center",
-    address: {
-      state: "CA",
-      city: "Los Angeles",
-      country: "USA",
-      postalCode: "90001",
-    },
+    id: '2',
+    name: 'Central Medical Center',
+    code: 'CMC002',
     phoneNumber: 9876543210,
-    code: "CMC002",
+    address: {
+      blockNumber: 'B4',
+      street: 'Health Avenue',
+      city: 'Los Angeles',
+      state: 'CA',
+      country: 'USA',
+      postalCode: '90001'
+    }
   },
 ];
 
 const AddConsultation = () => {
   const [formData, setFormData] = useState<FormData>({
-    patientId: "",
     hospital: null,
     details: {
       firstName: "",
@@ -78,8 +82,8 @@ const AddConsultation = () => {
       dateOfBirth: "",
     },
     address: {
-      state: "",
       city: "",
+      state: "",
       country: "",
       postalCode: "",
     },
@@ -93,7 +97,7 @@ const AddConsultation = () => {
     const { name, value } = e.target;
 
     if (name === "hospital") {
-      const selectedHospital = hospitals.find((h) => h.hospitalid === value);
+      const selectedHospital = hospitals.find((h) => h.id === value);
       setFormData((prev) => ({
         ...prev,
         hospital: selectedHospital || null,
@@ -123,7 +127,6 @@ const AddConsultation = () => {
 
     const submissionData = {
       ...formData,
-      patientId: ulid(),
       createdAt: new Date().toISOString(),
     };
 
@@ -152,7 +155,7 @@ const AddConsultation = () => {
                 </label>
                 <select
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                  value={formData.hospital?.hospitalid || ""}
+                  value={formData.hospital?.id || ""}
                   onChange={(e) => {
                     handleChange({
                       target: {
@@ -166,8 +169,8 @@ const AddConsultation = () => {
                   <option value="">Select a hospital</option>
                   {hospitals.map((hospital) => (
                     <option
-                      key={hospital.hospitalid}
-                      value={hospital.hospitalid}
+                      key={hospital.id}
+                      value={hospital.id}
                     >
                       {hospital.name}
                     </option>

@@ -1,21 +1,31 @@
 import type { ULID } from 'ulid';
 import type { RedisClientType } from 'redis';
+import type { CreateConsultationDto } from './dto';
+import type { NewConsultation } from 'src/database';
 import { errors, type ReturnResponse, type ReturnError } from '../../constants';
 import { Inject, Injectable } from '@nestjs/common';
 import { consultationsRepository } from 'src/database/repositories/consultations.repository';
-import { NewConsultation } from 'src/database';
+import { patientsRepository } from 'src/database/repositories/patients.repository';
 
 @Injectable()
 export class ConsultationsService {
   constructor(
     @Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType,
-  ) {}
+  ) { }
 
   async createConsultation(
-    consultationData: NewConsultation,
+    userId: ULID,
+    consultationData: CreateConsultationDto,
   ): Promise<ReturnResponse | ReturnError> {
+
+    const checkPatientExists = await patientsRepository.fetchPatientByUserId(userId)
+
+    if (checkPatientExists === null) {
+      return errors.CONFLICT;
+    }
+
     const consultation =
-      await consultationsRepository.createConsultation(consultationData);
+      await consultationsRepository.createConsultation(userId, consultationData);
 
     if (!consultation) {
       return errors.INTERNAL_SERVER_ERROR;

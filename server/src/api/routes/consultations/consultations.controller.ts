@@ -1,5 +1,6 @@
 import type { ULID } from 'ulid';
 import type { NewConsultation } from 'src/database';
+import type { CreateConsultationDto } from './dto';
 import {
   Body,
   Controller,
@@ -9,16 +10,30 @@ import {
   Post,
   Put,
   Query,
+  Req,
 } from '@nestjs/common';
 import { ConsultationsService } from './consultations.service';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from 'src/api/guards';
+import { errors } from 'src/api/constants';
 
 @Controller('consultations')
 export class ConsultationsController {
   constructor(private readonly consultationsService: ConsultationsService) {}
 
   @Post('/')
-  async createConsultation(@Body() consultationsData: NewConsultation) {
-    return this.consultationsService.createConsultation(consultationsData);
+  @UseGuards(AuthGuard)
+  async createConsultation(
+    @Req() req,
+    @Body() consultationsData: CreateConsultationDto
+  ) {
+    const userId = req.user.id;
+    
+    if (!userId) {
+      return errors.UNAUTHORIZED;
+    }
+
+    return this.consultationsService.createConsultation(userId, consultationsData);
   }
 
   @Get('/')
