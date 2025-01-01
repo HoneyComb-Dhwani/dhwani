@@ -56,7 +56,7 @@ export class AdminGuard implements CanActivate {
       request.user = user;
 
       return true;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+       
     } catch (error) {
       throw new UnauthorizedException(errors.UNAUTHORIZED);
     }

@@ -22,9 +22,8 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\""
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
-    "@typescript-eslint/parser": "^5.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@dhwani/eslint-config": "workspace:*",
+    "eslint": "^9.17.0",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "turbo": "latest"
