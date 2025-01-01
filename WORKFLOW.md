@@ -13,7 +13,7 @@ The application is designed to facilitate the management of medical consultation
   - **Upcoming Sessions**: View details about upcoming therapy sessions.
   - **Ongoing Consultations**: Monitor progress and details of their current treatment courses.
   - **Session History**: Track past sessions and any relevant notes from therapists.
-  
+
 ### **2.2 Therapist**
 
 - **Registration & Login**: Therapists are assigned credentials by the Supervisor in their hospital. The login ID is typically formatted as `therapist1@hospital1`, where "therapist1" is the unique identifier, and "hospital1" is the hospital domain.
@@ -48,7 +48,7 @@ A **session** is an individual therapy appointment within the course of a consul
 
 ### **4.1 Patient Registration & Access**
 
-1. **Self-Registration**: 
+1. **Self-Registration**:
    - Patients self-register using their email address.
    - The registration process includes providing personal information and creating a password.
 2. **Login**:
@@ -58,11 +58,11 @@ A **session** is an individual therapy appointment within the course of a consul
      - View upcoming sessions and consult with therapists.
      - Track the progress of their ongoing consultations.
      - Review the history of past sessions.
-  
+
 ### **4.2 Therapist Registration & Access**
 
 1. **Assigned by Supervisor**:
-   - Therapists receive login credentials from their supervisor in the hospital. 
+   - Therapists receive login credentials from their supervisor in the hospital.
    - The login ID is in the format `therapistID@hospitalDomain.com`.
 2. **Login**:
    - Therapists use the assigned login credentials to access their accounts.

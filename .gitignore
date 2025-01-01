@@ -8,6 +8,10 @@ node_modules/
 !.yarn/releases
 !.yarn/versions
 
+# Turbo
+.turbo-cache
+.turbo
+
 # next.js
 .next/
 out/
