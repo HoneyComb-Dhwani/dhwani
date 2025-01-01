@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Button from '../common/Button';
 import Input from '../common/Input';
-import { API_URL } from '@/env';
+import { BACKEND_URL } from '@/env';
 
 const Form: React.FC = () => {
   const [formType, setFormType] = useState<'register' | 'login' | 'work'>('login');
@@ -16,7 +16,7 @@ const Form: React.FC = () => {
 
   const handleRegister = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/v1/auth/register`, {
+      const res = await fetch(`${BACKEND_URL}/api/v1/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ const Form: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/v1/auth/login`, {
+      const res = await fetch(`${BACKEND_URL}/api/v1/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ const Form: React.FC = () => {
 
   const handleWorkLogin = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/v1/auth/workLogin`, {
+      const res = await fetch(`${BACKEND_URL}/api/v1/auth/workLogin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
