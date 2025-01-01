@@ -1,8 +1,11 @@
+import Layout from '@/components/dash/Layout';
+import TherapistsList from '@/components/dash/therapists/TherapistsList';
+
 const ListTherapistsPage = () => {
   return (
-    <div>
-      <h1>Therapists</h1>
-    </div>
+    <Layout>
+      <TherapistsList />
+    </Layout>
   );
 };
 
