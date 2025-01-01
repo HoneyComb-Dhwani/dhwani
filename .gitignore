@@ -12,6 +12,10 @@ node_modules/
 .turbo-cache
 .turbo
 
+# Cli
+target/
+apps/cli/dhwani
+
 # next.js
 .next/
 out/
