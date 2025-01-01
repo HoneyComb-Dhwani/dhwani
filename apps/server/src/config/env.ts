@@ -5,7 +5,7 @@ import path from 'path';
 config({ path: path.resolve(__dirname, '../../../../.env') });
 
 const envSchema = z.object({
-  PORT: z.string().default('8000'),
+  BACKEND_PORT: z.string().default('8000'),
   DATABASE_URL: z.string({
     required_error: 'DATABASE_URL is required',
   }),
@@ -34,7 +34,7 @@ if (!parseEnv.success) {
 }
 
 export const env = {
-  port: parseInt(parseEnv.data.PORT, 10),
+  port: parseInt(parseEnv.data.BACKEND_PORT, 10),
   databaseUrl: parseEnv.data.DATABASE_URL,
   redisUrl: parseEnv.data.REDIS_URL,
   jwtSecret: parseEnv.data.JWT_SECRET,
