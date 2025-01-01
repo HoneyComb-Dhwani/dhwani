@@ -30,9 +30,12 @@ pub enum Commands {
         #[command(subcommand)]
         command: commands::docker::DockerCommands,
     },
+    UpgradeDeps {
+        #[command(subcommand)]
+        command: commands::deps::UpgradeCommands
+    },
     Lint,
-    Format,
-    UpgradeDeps,
+    Format
 }
 
 impl Cli {
@@ -43,9 +46,9 @@ impl Cli {
             Commands::Start { command } => command.execute(),
             Commands::Db { command } => command.execute(),
             Commands::Docker { command } => command.execute(),
+            Commands::UpgradeDeps { command } => command.execute(),
             Commands::Lint => commands::lint(),
             Commands::Format => commands::format(),
-            Commands::UpgradeDeps => commands::deps::upgrade_dependencies(),
         }
     }
 }
