@@ -4,7 +4,7 @@
 
 The application is designed to facilitate the management of medical consultations and therapy sessions in a hospital setting. Users are categorized into three types: **Supervisors**, **Therapists**, and **Patients**. Each user type has specific roles, permissions, and access to different sections of the application.
 
-[IMAGE](../blob/WORKFLOW.png)
+![IMAGE](../blob/WORKFLOW.png)
 
 ## **2. User Roles and Access**
 
