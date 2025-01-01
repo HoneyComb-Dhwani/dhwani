@@ -4,7 +4,7 @@
 
 This document outlines the technical architecture of the application, detailing the backend, frontend, database, messaging system, and other services used to power the system. The primary goal is to ensure an efficient and scalable system that can manage multiple users (patients, therapists, supervisors) and provide them with seamless access to the features of the application.
 
-![IMAGE](./ARCH.png)
+![IMAGE](../blob/ARCH.png)
 
 ## **2. Technology Stack**
 
