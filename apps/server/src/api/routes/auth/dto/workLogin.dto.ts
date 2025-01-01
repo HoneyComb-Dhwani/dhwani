@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type { ULID } from 'ulid';
 import { createULIDSchema } from 'src/api/utils/ulid.utils';
 
-const WorkLoginSchema = z.object({
+export const WorkLoginSchema = z.object({
   credentials: z.string(),
   password: z.string(),
 });

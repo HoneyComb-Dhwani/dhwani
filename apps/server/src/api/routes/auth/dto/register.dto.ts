@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const RegisterDto = z.object({
+export const RegisterSchema = z.object({
   name: z.string(),
   email: z.string().email('Invalid email'),
   password: z
@@ -9,4 +9,4 @@ export const RegisterDto = z.object({
     .max(16, 'Password must be at most 16 characters'),
 });
 
-export type RegisterDto = z.infer<typeof RegisterDto>;
+export type RegisterDto = z.infer<typeof RegisterSchema>;

@@ -3,7 +3,7 @@ import Form from '@/components/auth/Form';
 
 const Auth: React.FC = () => {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen">
       <div className="relative flex flex-1 items-center justify-center overflow-hidden bg-gradient-to-br from-white via-blue-50 to-blue-100">
         <div className="bg-grid-slate-100 absolute inset-0 opacity-25 [mask-image:linear-gradient(0deg,white,transparent)]"></div>
 

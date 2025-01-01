@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import { BACKEND_URL } from '@/env';
+import { useRouter } from 'next/navigation';
 
 const Form: React.FC = () => {
   const [formType, setFormType] = useState<'register' | 'login' | 'work'>('login');
@@ -13,6 +14,8 @@ const Form: React.FC = () => {
     name: '',
     credentials: '',
   });
+
+  const router = useRouter();
 
   const handleRegister = async () => {
     try {
@@ -27,7 +30,7 @@ const Form: React.FC = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        console.error(data.message);
+        console.log(data.message);
       }
     } catch (error) {
       console.log(error);
@@ -47,13 +50,14 @@ const Form: React.FC = () => {
       const resData = await res.json();
 
       if (!res.ok) {
-        console.error(resData.message);
+        console.log(resData.message);
       }
 
       if (!resData.data.token) {
-        console.error('No token found');
+        console.log('No token found');
       } else {
         localStorage.setItem('token', resData.data.token);
+        router.push('/dashboard');
       }
     } catch (error) {
       console.log(error);
@@ -73,11 +77,11 @@ const Form: React.FC = () => {
       const resData = await res.json();
 
       if (!res.ok) {
-        console.error(resData.message);
+        console.log(resData.message);
       }
 
       if (!resData.data.token) {
-        console.error('No token found');
+        console.log('No token found');
       } else {
         localStorage.setItem('token', resData.data.token);
       }
@@ -96,7 +100,7 @@ const Form: React.FC = () => {
     } else if (formType === 'work') {
       handleWorkLogin();
     } else {
-      console.error('Invalid form type');
+      console.log('Invalid form type');
     }
   };
 

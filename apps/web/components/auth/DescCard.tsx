@@ -23,10 +23,10 @@ const DescCard: React.FC = () => {
   ];
 
   return (
-    <div className="flex h-full w-full items-center justify-center bg-gradient-to-tl from-neutral-50 to-white p-8">
-      <div className="w-full max-w-2xl space-y-16">
+    <div className="flex h-fit w-full items-center justify-center bg-gradient-to-tl from-neutral-50 to-white p-8">
+      <div className="w-full max-w-2xl space-y-5">
         <div className="space-y-6 text-center">
-          <div className="mb-8 flex justify-center">
+          <div className="flex justify-center">
             <Image
               src="/logo.png"
               alt="Dhwani Logo"
@@ -46,7 +46,7 @@ const DescCard: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid gap-8">
+        <div className="grid gap-4">
           {features.map((feature, index) => (
             <div
               key={index}
