@@ -3,11 +3,53 @@ import { supervisors, hospitals, users } from '../schema';
 import { and, eq, sql } from 'drizzle-orm';
 import type { NewSupervisor, Supervisor } from '../types';
 import type { ULID } from 'ulid';
+import { hashPassword } from 'src/api/utils';
 
 export class SupervisorRepository {
-  async insertSupervisor(supervisorData: NewSupervisor): Promise<Supervisor> {
-    const [supervisor] = await db.insert(supervisors).values(supervisorData).returning();
-    return supervisor;
+  async insertSupervisor(supervisorData: {
+    hospitalId: ULID;
+    userCode: string;
+  }): Promise<Supervisor | null> {
+    const insertSupervisor = await db.transaction(async (tx) => {
+      const fetchHospital = await tx
+        .select()
+        .from(hospitals)
+        .where(eq(hospitals.id, supervisorData.hospitalId));
+
+      if (fetchHospital.length === 0) {
+        return null;
+      }
+
+      const defaultPassword = 'pass123';
+      const hashedPassword = await hashPassword(defaultPassword);
+
+      const [insertUser] = await tx
+        .insert(users)
+        .values({
+          name: fetchHospital[0].name + ' Supervisor',
+          email: fetchHospital[0].email,
+          role: 'SUPERVISOR',
+          hashPassword: hashedPassword,
+        })
+        .returning();
+
+      if (!insertUser) {
+        return null;
+      }
+
+      const [supervisor] = await tx
+        .insert(supervisors)
+        .values({
+          userId: insertUser.id,
+          hospitalId: supervisorData.hospitalId,
+          userCode: supervisorData.userCode,
+        })
+        .returning();
+
+      return supervisor;
+    });
+
+    return insertSupervisor ?? null;
   }
 
   async fetchAllSupervisors(limit: number, offset: number) {

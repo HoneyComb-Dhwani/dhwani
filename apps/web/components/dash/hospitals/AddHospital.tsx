@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { Hospital } from '@/types/hospitals';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
+import { BACKEND_URL } from '@/env';
 
 const AddHospital = () => {
   const [formData, setFormData] = useState<Hospital>({
@@ -19,6 +20,7 @@ const AddHospital = () => {
     },
     phoneNumber: 0,
     code: '',
+    email: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,10 +45,26 @@ const AddHospital = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
-    // Handle form submission
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/v1/hospitals`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        console.log('Failed to add hospital');
+      }
+
+      console.log('Hospital added successfully');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -65,6 +83,13 @@ const AddHospital = () => {
               placeholder="Enter hospital name"
               value={formData.name}
               onChange={(e) => handleChange({ ...e, target: { ...e.target, name: 'name' } })}
+            />
+            <Input
+              label="Hospital Email"
+              type="email"
+              placeholder="Enter hospital email"
+              value={formData.email}
+              onChange={(e) => handleChange({ ...e, target: { ...e.target, name: 'email' } })}
             />
             <Input
               label="Hospital Code"

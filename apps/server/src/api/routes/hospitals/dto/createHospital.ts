@@ -13,6 +13,7 @@ export const CreateHospitalSchema = z.object({
   }),
   phoneNumber: z.number(),
   code: z.string(),
+  email: z.string().email(),
 });
 
 export type CreateHospitalDto = z.infer<typeof CreateHospitalSchema>;

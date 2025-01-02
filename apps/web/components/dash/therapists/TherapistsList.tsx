@@ -21,6 +21,7 @@ const TherapistsList = () => {
       },
       phoneNumber: 1234567890,
       code: 'CGH001',
+      email: '123',
     },
     {
       id: '2',
@@ -33,6 +34,7 @@ const TherapistsList = () => {
       },
       phoneNumber: 9876543210,
       code: 'CMC002',
+      email: '123',
     },
   ]);
 

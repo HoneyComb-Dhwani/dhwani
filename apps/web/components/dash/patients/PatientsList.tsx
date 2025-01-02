@@ -15,77 +15,31 @@ import {
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Patient } from '@/types/patients';
+import { BACKEND_URL } from '@/env';
 
 const PatientsList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedHospital, setSelectedHospital] = useState('');
-  const [hospitals, setHospitals] = useState<Hospital[]>([
-    {
-      id: '1',
-      name: 'City General Hospital',
-      code: 'CGH001',
-      phoneNumber: 1234567890,
-      address: {
-        houseNumber: '123',
-        street: 'Medical Lane',
-        city: 'New York',
-        state: 'NY',
-        country: 'USA',
-        postalCode: '10001',
-      },
-    },
-    {
-      id: '2',
-      name: 'Central Medical Center',
-      code: 'CMC002',
-      phoneNumber: 9876543210,
-      address: {
-        blockNumber: 'B4',
-        street: 'Health Avenue',
-        city: 'Los Angeles',
-        state: 'CA',
-        country: 'USA',
-        postalCode: '90001',
-      },
-    },
-  ]);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
 
-  const [patients, setPatients] = useState<Patient[]>([
-    {
-      id: '1',
-      hospitalId: '1',
-      hospitalName: 'City General Hospital',
-      userId: 'user1',
-      userName: 'John Doe',
-      details: {
-        firstName: 'John',
-        middleName: 'Robert',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        phoneNumber: '1234567890',
-        dateOfBirth: '1990-01-15',
-      },
-      address: {
-        id: 'addr1',
-        city: 'New York',
-        state: 'NY',
-        country: 'USA',
-        postalCode: '10001',
-      },
-      emergencyContactName: 'Jane Doe',
-      emergencyContactPhone: '9876543210',
-      createdAt: '2024-01-15T00:00:00Z',
-    },
-  ]);
+  const [patients, setPatients] = useState<Patient[]>([]);
 
   useEffect(() => {
-    // Fetch hospitals when component mounts
-    // const fetchHospitals = async () => {
-    //     const response = await fetch('/api/hospitals');
-    //     const data = await response.json();
-    //     setHospitals(data.hospitals);
-    // };
-    // fetchHospitals();
+    const fetchHospitals = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/hospitals?page=1&limit=100`);
+        if (res.ok) {
+          const resData = await res.json();
+          setHospitals(resData.data);
+        } else {
+          console.log('Failed to fetch hospitals');
+        }
+      } catch (error) {
+        console.error('Failed to fetch hospitals:', error);
+      }
+    };
+
+    fetchHospitals();
   }, []);
 
   const handleSearch = () => {

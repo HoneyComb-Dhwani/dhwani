@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
 import type { Hospital } from '@/types/hospitals';
+import { BACKEND_URL } from '@/env';
 
 const AddSupervisor = () => {
   const [formData, setFormData] = useState({
@@ -11,46 +12,47 @@ const AddSupervisor = () => {
     hospitalId: '',
   });
 
-  const [hospitals, setHospitals] = useState<Hospital[]>([
-    {
-      id: '1',
-      name: 'City General Hospital',
-      address: {
-        state: 'NY',
-        city: 'New York',
-        country: 'USA',
-        postalCode: '10001',
-      },
-      phoneNumber: 1234567890,
-      code: 'CGH001',
-    },
-    {
-      id: '2',
-      name: 'Central Medical Center',
-      address: {
-        state: 'CA',
-        city: 'Los Angeles',
-        country: 'USA',
-        postalCode: '90001',
-      },
-      phoneNumber: 9876543210,
-      code: 'CMC002',
-    },
-  ]);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
+
+  const fetchHospitals = async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/v1/hospitals?page=1&limit=100`);
+      if (res.ok) {
+        const resData = await res.json();
+        setHospitals(resData.data);
+      } else {
+        console.log('Failed to fetch hospitals');
+      }
+    } catch (error) {
+      console.log('Failed to fetch hospitals:', error);
+    }
+  };
 
   useEffect(() => {
-    // Fetch hospitals when component mounts
-    // const fetchHospitals = async () => {
-    //     const response = await fetch('/api/hospitals');
-    //     const data = await response.json();
-    //     setHospitals(data.hospitals);
-    // };
-    // fetchHospitals();
+    fetchHospitals();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/v1/supervisors`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        alert('Supervisor added successfully');
+        setFormData({ userCode: '', hospitalId: '' });
+      } else {
+        console.log('Failed to add supervisor');
+      }
+    } catch (error) {
+      console.log('Failed to add supervisor:', error);
+    }
   };
 
   return (

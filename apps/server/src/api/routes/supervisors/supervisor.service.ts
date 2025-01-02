@@ -9,7 +9,10 @@ import { supervisorRepository } from 'src/database/repositories/supervisor.repos
 export class SupervisorService {
   constructor(@Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType) {}
 
-  async createSupervisor(body: NewSupervisor): Promise<ReturnResponse | ReturnError> {
+  async createSupervisor(body: {
+    userCode: string;
+    hospitalId: ULID;
+  }): Promise<ReturnResponse | ReturnError> {
     const supervisor = await supervisorRepository.insertSupervisor(body);
 
     if (!supervisor) {
@@ -45,7 +48,9 @@ export class SupervisorService {
     }
 
     if (supervisors) {
-      await this.redisClient.set(cacheKey, JSON.stringify(supervisors));
+      await this.redisClient.set(cacheKey, JSON.stringify(supervisors), {
+        EX: 60 * 5,
+      });
     }
 
     return {

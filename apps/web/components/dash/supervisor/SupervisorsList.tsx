@@ -5,80 +5,79 @@ import type { Supervisor } from '@/types/supervisors';
 import Button from '@/components/common/Button';
 import { Users, Search, Edit, Trash2, Building, Mail } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { BACKEND_URL } from '@/env';
 
 const SupervisorsList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedHospital, setSelectedHospital] = useState('');
-  const [hospitals, setHospitals] = useState<Hospital[]>([
-    {
-      id: '1',
-      name: 'City General Hospital',
-      address: {
-        state: 'NY',
-        city: 'New York',
-        country: 'USA',
-        postalCode: '10001',
-      },
-      phoneNumber: 1234567890,
-      code: 'CGH001',
-    },
-    {
-      id: '2',
-      name: 'Central Medical Center',
-      address: {
-        state: 'CA',
-        city: 'Los Angeles',
-        country: 'USA',
-        postalCode: '90001',
-      },
-      phoneNumber: 9876543210,
-      code: 'CMC002',
-    },
-  ]);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
+  const [supervisors, setSupervisors] = useState<Supervisor[]>([]);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(20);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
-  const [supervisors, setSupervisors] = useState<Supervisor[]>([
-    {
-      id: '1',
-      userId: 'user1',
-      userName: 'John Doe',
-      userEmail: 'john.doe@hospital.com',
-      userRole: 'supervisor',
-      userCode: 'SUP001',
-      hospitalName: 'City General Hospital',
-      hospitalCode: 'CGH001',
-      hospitalId: '1',
-      createdAt: '2024-01-15T00:00:00Z',
-    },
-    {
-      id: '2',
-      userId: 'user2',
-      userName: 'Jane Smith',
-      userEmail: 'jane.smith@hospital.com',
-      userRole: 'supervisor',
-      userCode: 'SUP002',
-      hospitalName: 'Central Medical Center',
-      hospitalCode: 'CMC002',
-      hospitalId: '2',
-      createdAt: '2024-01-16T00:00:00Z',
-    },
-  ]);
+  const fetchSupervisors = async (pageNum: number) => {
+    try {
+      setIsLoading(true);
+      let url = `${BACKEND_URL}/api/v1/supervisors?page=${pageNum}&limit=${limit}`;
+
+      if (searchTerm) url += `&search=${searchTerm}`;
+      if (selectedHospital) url += `&hospitalId=${selectedHospital}`;
+
+      const res = await fetch(url);
+      if (res.ok) {
+        const resData = await res.json();
+        if (pageNum === 1) {
+          setSupervisors(resData.data);
+        } else {
+          setSupervisors((prev) => [...prev, ...resData.data]);
+        }
+        setHasMore(resData.data.length === limit);
+      } else {
+        console.log('Failed to fetch supervisors');
+      }
+    } catch (error) {
+      console.error('Failed to fetch supervisors:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchHospitals = async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/v1/hospitals?page=1&limit=100`);
+      if (res.ok) {
+        const resData = await res.json();
+        setHospitals(resData.data);
+      } else {
+        console.log('Failed to fetch hospitals');
+      }
+    } catch (error) {
+      console.error('Failed to fetch hospitals:', error);
+    }
+  };
 
   useEffect(() => {
-    // Fetch hospitals when component mounts
-    // const fetchHospitals = async () => {
-    //     const response = await fetch('/api/hospitals');
-    //     const data = await response.json();
-    //     setHospitals(data.hospitals);
-    // };
-    // fetchHospitals();
+    fetchHospitals();
+    fetchSupervisors(1);
   }, []);
 
   const handleSearch = () => {
-    console.log('Searching with:', { searchTerm });
+    setPage(1);
+    fetchSupervisors(1);
   };
 
   const handleHospitalFilter = (hospitalId: string) => {
-    console.log('Filtering by hospital:', hospitalId);
+    setPage(1);
+    setSelectedHospital(hospitalId);
+    fetchSupervisors(1);
+  };
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchSupervisors(nextPage);
   };
 
   return (
@@ -157,54 +156,109 @@ const SupervisorsList = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {supervisors.map((supervisor) => (
-                <tr key={supervisor.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <span className="rounded-md bg-gray-100 px-2 py-1 text-sm">
-                      {supervisor.userCode}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <Users className="mr-3 h-5 w-5 text-blue-600" />
-                      <span className="font-medium">{supervisor.userName}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <Mail className="mr-2 h-4 w-4 text-gray-400" />
-                      <span className="text-gray-600">{supervisor.userEmail}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <Building className="mr-2 h-4 w-4 text-gray-400" />
-                      <span>{supervisor.hospitalName}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="rounded-md bg-gray-100 px-2 py-1 text-sm">
-                      {supervisor.hospitalCode}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {new Date(supervisor.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex space-x-3">
-                      <button className="text-blue-600 hover:text-blue-800">
-                        <Edit className="h-5 w-5" />
-                      </button>
-                      <button className="text-red-600 hover:text-red-800">
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </div>
+              {supervisors.length > 0 ? (
+                supervisors.map((supervisor) => (
+                  <tr key={supervisor.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">
+                      <span className="rounded-md bg-gray-100 px-2 py-1 text-sm">
+                        {supervisor.userCode}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center">
+                        <Users className="mr-3 h-5 w-5 text-blue-600" />
+                        <span className="font-medium">{supervisor.userName}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center">
+                        <Mail className="mr-2 h-4 w-4 text-gray-400" />
+                        <span className="text-gray-600">{supervisor.userEmail}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center">
+                        <Building className="mr-2 h-4 w-4 text-gray-400" />
+                        <span>{supervisor.hospitalName}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="rounded-md bg-gray-100 px-2 py-1 text-sm">
+                        {supervisor.hospitalCode}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {new Date(supervisor.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={() =>
+                            (window.location.href = `/dashboard/admin/supervisors/${supervisor.id}/edit`)
+                          }
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          <Edit className="h-5 w-5" />
+                        </button>
+                        <button className="text-red-600 hover:text-red-800">
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="py-4 text-center text-gray-500">
+                    No supervisors found
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
+
+        {supervisors.length > 0 && (
+          <div className="flex justify-center border-t p-4">
+            {hasMore ? (
+              <button
+                onClick={handleLoadMore}
+                disabled={isLoading}
+                className="rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600 disabled:bg-blue-300"
+              >
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <svg
+                      className="h-5 w-5 animate-spin"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    Loading...
+                  </span>
+                ) : (
+                  'Load More'
+                )}
+              </button>
+            ) : (
+              <p className="text-gray-500">No more supervisors to load</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

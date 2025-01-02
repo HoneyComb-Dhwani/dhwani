@@ -20,6 +20,7 @@ export class HospitalService {
 
     const hospital = await hospitalRepository.createHospital({
       name: body.name,
+      email: body.email,
       addressId: createAddress.id,
       phoneNumber: body.phoneNumber,
       code: body.code,

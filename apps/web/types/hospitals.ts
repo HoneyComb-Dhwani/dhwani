@@ -12,4 +12,5 @@ export type Hospital = {
   };
   phoneNumber: number;
   code: string;
+  email: string;
 };

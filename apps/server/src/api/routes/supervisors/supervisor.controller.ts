@@ -1,9 +1,21 @@
 import type { ULID } from 'ulid';
 import type { NewSupervisor } from 'src/database';
-import { Controller, Get, Post, Body, Param, Delete, Put, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import { SupervisorService } from './supervisor.service';
+import { ResponseInterceptor } from 'src/api/interceptors';
 
 @Controller('supervisors')
+@UseInterceptors(ResponseInterceptor)
 export class SupervisorController {
   constructor(private readonly supervisorService: SupervisorService) {}
 

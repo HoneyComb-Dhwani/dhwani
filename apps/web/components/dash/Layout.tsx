@@ -24,10 +24,10 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen">
       <Sidebar userRole="admin" isOpen={isSidebarOpen} onToggle={handleSidebarToggle} />
       <main
-        className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'} p-8`}
+        className={`flex-1 bg-gray-50 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'} p-8`}
       >
         {children}
       </main>

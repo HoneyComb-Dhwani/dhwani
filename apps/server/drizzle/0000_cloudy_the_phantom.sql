@@ -34,6 +34,7 @@ CREATE TABLE "hospitals" (
 	"id" char(26) PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"address_id" char(26),
+	"email" text NOT NULL,
 	"phone_number" integer NOT NULL,
 	"code" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -96,7 +97,7 @@ CREATE TABLE "therapists" (
 CREATE TABLE "supervisors" (
 	"id" char(26) PRIMARY KEY NOT NULL,
 	"user_id" char(26),
-	"user_code" text DEFAULT 'supervisor' NOT NULL,
+	"user_code" text NOT NULL,
 	"hospital_id" char(26),
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,

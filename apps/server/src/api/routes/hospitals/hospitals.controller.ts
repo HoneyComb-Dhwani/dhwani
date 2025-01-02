@@ -1,10 +1,22 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import { NewHospital } from 'src/database';
 import { HospitalService } from './hospitals.service';
 import { ULID } from 'ulid';
 import { CreateHospitalDto } from './dto';
+import { ResponseInterceptor } from 'src/api/interceptors';
 
 @Controller('hospitals')
+@UseInterceptors(ResponseInterceptor)
 export class HospitalController {
   constructor(private readonly hospitalsService: HospitalService) {}
 

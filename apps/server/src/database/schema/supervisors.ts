@@ -13,7 +13,7 @@ export const supervisors = pgTable('supervisors', {
     default: ulid,
     foreignKey: true,
   }).references(() => users.id),
-  userCode: text('user_code').notNull().default('supervisor'),
+  userCode: text('user_code').notNull(),
   hospitalId: ulidType('hospital_id', {
     primaryKey: false,
     default: ulid,
