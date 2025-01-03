@@ -1,1 +1,1 @@
-export * from './createConsultation';
+export * from './createConsultation.dto';

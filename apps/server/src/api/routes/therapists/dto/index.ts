@@ -1,1 +1,1 @@
-export * from './createTherapist';
+export * from './createTherapist.dto';
