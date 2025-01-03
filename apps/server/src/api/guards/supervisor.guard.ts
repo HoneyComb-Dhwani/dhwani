@@ -10,12 +10,16 @@ import { errors } from '../constants';
 import { checkAuth } from '../utils/auth.utils';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class SupervisorGuard implements CanActivate {
   constructor(@Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const auth = await checkAuth(context, this.redisClient);
     if (!auth.isAuthenticated) {
+      throw new UnauthorizedException(errors.UNAUTHORIZED);
+    }
+
+    if (auth.user.role !== 'SUPERVISOR' && auth.user.role !== 'ADMIN') {
       throw new UnauthorizedException(errors.UNAUTHORIZED);
     }
 

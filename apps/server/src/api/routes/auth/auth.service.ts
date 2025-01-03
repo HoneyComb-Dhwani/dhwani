@@ -126,13 +126,28 @@ export class AuthService {
       role: worker.userRole,
     });
 
+    const hospitalId = worker.hospitalId;
+
     return {
       status: 200,
       message: 'OK',
       prettyMessage: 'User logged in successfully',
       data: {
         token,
+        hospitalId,
       },
+    };
+  }
+
+  async checkUserSession(user: User): Promise<ReturnResponse | ReturnError> {
+    if (user === null) {
+      return errors.UNAUTHORIZED;
+    }
+
+    return {
+      status: 200,
+      message: 'OK',
+      prettyMessage: 'Session is valid',
     };
   }
 }

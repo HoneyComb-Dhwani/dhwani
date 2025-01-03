@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseInterceptors, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseInterceptors, UsePipes } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   LoginDto,
@@ -32,5 +32,11 @@ export class AuthController {
   @UsePipes(new ZodValidationPipe(WorkLoginSchema))
   async workLogin(@Body() body: WorkLoginDto) {
     return this.authService.workLogin(body);
+  }
+
+  @Get('/session')
+  async session(@Req() req) {
+    const user = req.user;
+    return this.authService.checkUserSession(user);
   }
 }

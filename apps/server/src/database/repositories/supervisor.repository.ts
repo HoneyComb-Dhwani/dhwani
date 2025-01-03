@@ -20,7 +20,7 @@ export class SupervisorRepository {
         return null;
       }
 
-      const defaultPassword = 'pass123';
+      const defaultPassword = 'pass1234';
       const hashedPassword = await hashPassword(defaultPassword);
 
       const [insertUser] = await tx
@@ -127,6 +127,7 @@ export class SupervisorRepository {
           eq(supervisors.isDeleted, false),
         ),
       );
+
     return supervisor ?? null;
   }
 
