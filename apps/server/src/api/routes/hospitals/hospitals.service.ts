@@ -59,7 +59,9 @@ export class HospitalService {
     }
 
     if (hospitals) {
-      await this.redisClient.set(cacheKey, JSON.stringify(hospitals));
+      await this.redisClient.set(cacheKey, JSON.stringify(hospitals), {
+        EX: 60 * 5,
+      });
     }
 
     return {

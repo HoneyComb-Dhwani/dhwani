@@ -54,7 +54,7 @@ const SupervisorsList = () => {
         console.log('Failed to fetch hospitals');
       }
     } catch (error) {
-      console.error('Failed to fetch hospitals:', error);
+      console.log('Failed to fetch hospitals:', error);
     }
   };
 

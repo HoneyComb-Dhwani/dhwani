@@ -35,7 +35,9 @@ export class HospitalRepository {
       .limit(limit)
       .offset(offset);
 
-    return allHospitals ?? null;
+    const filteredHospitals = allHospitals.filter((hospital) => hospital.code !== 'dhwani');
+
+    return filteredHospitals ?? null;
   }
 
   async fetchHospitalByName(name: string) {

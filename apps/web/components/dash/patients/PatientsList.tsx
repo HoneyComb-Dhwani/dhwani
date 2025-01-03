@@ -21,7 +21,8 @@ const PatientsList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedHospital, setSelectedHospital] = useState('');
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
-
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [patients, setPatients] = useState<Patient[]>([]);
 
   useEffect(() => {
@@ -35,12 +36,27 @@ const PatientsList = () => {
           console.log('Failed to fetch hospitals');
         }
       } catch (error) {
-        console.error('Failed to fetch hospitals:', error);
+        console.log('Failed to fetch hospitals:', error);
+      }
+    };
+
+    const fetchPatients = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/patients?page=${page}&limit=${limit}`);
+        if (res.ok) {
+          const resData = await res.json();
+          setPatients(resData.data);
+        } else {
+          console.log('Failed to fetch patients');
+        }
+      } catch (error) {
+        console.log('Failed to fetch patients:', error);
       }
     };
 
     fetchHospitals();
-  }, []);
+    fetchPatients();
+  }, [page, limit]);
 
   const handleSearch = () => {
     console.log('Searching with:', { searchTerm });
@@ -95,11 +111,12 @@ const PatientsList = () => {
               }}
             >
               <option value="">All Hospitals</option>
-              {hospitals.map((hospital) => (
-                <option key={hospital.id} value={hospital.id}>
-                  {hospital.name}
-                </option>
-              ))}
+              {hospitals.length > 0 &&
+                hospitals.map((hospital) => (
+                  <option key={hospital.id} value={hospital.id}>
+                    {hospital.name}
+                  </option>
+                ))}
             </select>
             <div className="w-32">
               <Button onClick={handleSearch}>Search</Button>
@@ -132,68 +149,76 @@ const PatientsList = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {patients.map((patient) => (
-                <tr key={patient.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <Users className="mr-3 h-5 w-5 text-blue-600" />
-                      <div>
-                        <div className="font-medium">{getFullName(patient)}</div>
-                        <div className="text-sm text-gray-500">
-                          <Calendar className="mr-1 inline h-4 w-4" />
-                          {formatDate(patient.details.dateOfBirth)}
+              {patients.length > 0 ? (
+                patients.map((patient) => (
+                  <tr key={patient.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center">
+                        <Users className="mr-3 h-5 w-5 text-blue-600" />
+                        <div>
+                          <div className="font-medium">{getFullName(patient)}</div>
+                          <div className="text-sm text-gray-500">
+                            <Calendar className="mr-1 inline h-4 w-4" />
+                            {formatDate(patient.details.dateOfBirth)}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="space-y-1">
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center">
+                          <Mail className="mr-2 h-4 w-4 text-gray-400" />
+                          <span className="text-gray-600">{patient.details.email}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Phone className="mr-2 h-4 w-4 text-gray-400" />
+                          <span className="text-gray-600">
+                            {formatPhoneNumber(patient.details.phoneNumber)}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <Mail className="mr-2 h-4 w-4 text-gray-400" />
-                        <span className="text-gray-600">{patient.details.email}</span>
+                        <Building className="mr-2 h-4 w-4 text-gray-400" />
+                        <span>{patient.hospitalName}</span>
                       </div>
-                      <div className="flex items-center">
-                        <Phone className="mr-2 h-4 w-4 text-gray-400" />
-                        <span className="text-gray-600">
-                          {formatPhoneNumber(patient.details.phoneNumber)}
-                        </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center">
+                          <AlertCircle className="mr-2 h-4 w-4 text-red-400" />
+                          <span className="font-medium">{patient.emergencyContactName}</span>
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {formatPhoneNumber(patient.emergencyContactPhone)}
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <Building className="mr-2 h-4 w-4 text-gray-400" />
-                      <span>{patient.hospitalName}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center">
-                        <AlertCircle className="mr-2 h-4 w-4 text-red-400" />
-                        <span className="font-medium">{patient.emergencyContactName}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-600">
+                        {patient.address.city}, {patient.address.state}
                       </div>
-                      <div className="text-sm text-gray-500">
-                        {formatPhoneNumber(patient.emergencyContactPhone)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex space-x-3">
+                        <button className="text-blue-600 hover:text-blue-800">
+                          <Edit className="h-5 w-5" />
+                        </button>
+                        <button className="text-red-600 hover:text-red-800">
+                          <Trash2 className="h-5 w-5" />
+                        </button>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-600">
-                      {patient.address.city}, {patient.address.state}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex space-x-3">
-                      <button className="text-blue-600 hover:text-blue-800">
-                        <Edit className="h-5 w-5" />
-                      </button>
-                      <button className="text-red-600 hover:text-red-800">
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td className="px-6 py-4 text-center" colSpan={6}>
+                    No patients found
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

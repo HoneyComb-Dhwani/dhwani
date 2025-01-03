@@ -1,13 +1,53 @@
-import type { NewTherapist, Therapist } from '../types';
+import type { NewAddress, NewTherapist, Therapist } from '../types';
 import type { ULID } from 'ulid';
 import { db } from '../db';
 import { therapists, hospitals, users, addresses } from '../schema';
 import { and, eq, ilike, or, sql } from 'drizzle-orm';
+import { CreateTherapistDto } from 'src/api/routes/therapists/dto';
+import { addressRepository } from './address.repository';
+import { userRepository } from './user.repository';
 
 export class TherapistRepository {
-  async insertTherapist(therapistData: NewTherapist): Promise<Therapist> {
-    const [therapist] = await db.insert(therapists).values(therapistData).returning();
-    return therapist;
+  async insertTherapist(therapistData: CreateTherapistDto) {
+    const createTherapist = await db.transaction(async (tx) => {
+      const insertAddress = await addressRepository.insertAddress(
+        therapistData.address as NewAddress,
+      );
+      if (!insertAddress) {
+        return null;
+      }
+
+      const insertUser = await userRepository.insertUser({
+        name: `${therapistData.firstName} ${therapistData.middleName} ${therapistData.lastName}`,
+        email: therapistData.email,
+        role: 'THERAPIST',
+        hashPassword: 'pass123',
+      });
+
+      if (!insertUser) {
+        return null;
+      }
+
+      const insertNewTherapist = await db
+        .insert(therapists)
+        // @ts-ignore
+        .values({
+          userId: insertUser.id,
+          hospitalId: therapistData.hospitalId,
+          userCode: therapistData.userCode,
+          addressId: insertAddress.id,
+          firstName: therapistData.firstName,
+          middleName: therapistData.middleName,
+          lastName: therapistData.lastName,
+          email: therapistData.email,
+          phoneNumber: therapistData.phoneNumber,
+        })
+        .returning();
+
+      return insertNewTherapist ?? null;
+    });
+
+    return createTherapist;
   }
 
   async fetchAllTherapists(limit: number, offset: number) {

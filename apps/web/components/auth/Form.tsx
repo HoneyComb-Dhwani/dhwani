@@ -5,6 +5,7 @@ import Button from '../common/Button';
 import Input from '../common/Input';
 import { BACKEND_URL } from '@/env';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/providers/AuthProvider';
 
 const Form: React.FC = () => {
   const [formType, setFormType] = useState<'register' | 'login' | 'work'>('login');
@@ -14,6 +15,8 @@ const Form: React.FC = () => {
     name: '',
     credentials: '',
   });
+
+  const { setToken } = useAuth();
 
   const router = useRouter();
 
@@ -56,7 +59,7 @@ const Form: React.FC = () => {
       if (!resData.data.token) {
         console.log('No token found');
       } else {
-        localStorage.setItem('token', resData.data.token);
+        setToken(resData.data.token);
         router.push('/dashboard');
       }
     } catch (error) {
@@ -82,8 +85,11 @@ const Form: React.FC = () => {
 
       if (!resData.data.token) {
         console.log('No token found');
+      } else if (!resData.data.hospitalId) {
+        console.log('No hospitalId found');
       } else {
-        localStorage.setItem('token', resData.data.token);
+        setToken(resData.data.token);
+        localStorage.setItem('hospitalId', resData.data.hospitalId);
       }
     } catch (error) {
       console.log(error);
@@ -168,7 +174,7 @@ const Form: React.FC = () => {
             type="text"
             placeholder="Enter your Credentials"
             value={formData.credentials}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={(e) => setFormData({ ...formData, credentials: e.target.value })}
           />
         )}
 

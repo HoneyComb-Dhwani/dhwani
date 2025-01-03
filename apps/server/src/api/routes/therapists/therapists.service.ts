@@ -4,15 +4,16 @@ import type { NewTherapist } from 'src/database';
 import { Inject, Injectable } from '@nestjs/common';
 import { errors, type ReturnError, type ReturnResponse } from '../../constants';
 import { therapistRepository } from 'src/database/repositories/therapist.repository';
+import { CreateTherapistDto } from './dto';
 
 @Injectable()
 export class TherapistsService {
   constructor(@Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType) {}
 
-  async createTherapist(body: NewTherapist): Promise<ReturnResponse | ReturnError> {
-    const Therapist = await therapistRepository.insertTherapist(body);
+  async createTherapist(body: CreateTherapistDto): Promise<ReturnResponse | ReturnError> {
+    const therapist = await therapistRepository.insertTherapist(body);
 
-    if (!Therapist) {
+    if (!therapist) {
       return errors.INTERNAL_SERVER_ERROR;
     }
 

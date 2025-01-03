@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
+import { BACKEND_URL } from '@/env';
 
 interface Address {
   houseNumber?: string;
@@ -30,39 +31,8 @@ interface TherapistFormData {
   phoneNumber: string;
   userCode: string;
   address: Address;
-  hospital: Hospital | null;
+  hospitalId: string;
 }
-
-const hospitals: Hospital[] = [
-  {
-    id: '1',
-    name: 'City General Hospital',
-    code: 'CGH001',
-    phoneNumber: 1234567890,
-    address: {
-      houseNumber: '123',
-      street: 'Medical Lane',
-      city: 'New York',
-      state: 'NY',
-      country: 'USA',
-      postalCode: '10001',
-    },
-  },
-  {
-    id: '2',
-    name: 'Central Medical Center',
-    code: 'CMC002',
-    phoneNumber: 9876543210,
-    address: {
-      blockNumber: 'B4',
-      street: 'Health Avenue',
-      city: 'Los Angeles',
-      state: 'CA',
-      country: 'USA',
-      postalCode: '90001',
-    },
-  },
-];
 
 const AddTherapist = () => {
   const [formData, setFormData] = useState<TherapistFormData>({
@@ -78,8 +48,27 @@ const AddTherapist = () => {
       country: '',
       postalCode: '',
     },
-    hospital: null,
+    hospitalId: '',
   });
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
+
+  useEffect(() => {
+    const fetchHospitals = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/hospitals?page=1&limit=100`);
+        if (res.ok) {
+          const resData = await res.json();
+          setHospitals(resData.data);
+        } else {
+          console.log('Failed to fetch hospitals');
+        }
+      } catch (error) {
+        console.log('Failed to fetch hospitals:', error);
+      }
+    };
+
+    fetchHospitals();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -88,7 +77,7 @@ const AddTherapist = () => {
       const selectedHospital = hospitals.find((h) => h.id === value);
       setFormData((prev) => ({
         ...prev,
-        hospital: selectedHospital || null,
+        hospitalId: selectedHospital.id || null,
       }));
     } else if (name.includes('.')) {
       const [parent, child] = name.split('.');
@@ -107,17 +96,33 @@ const AddTherapist = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form data:', formData);
 
-    const submissionData = {
-      ...formData,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      isDeleted: false,
-    };
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/v1/therapists`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    console.log('Therapist Registration Data:', submissionData);
+      if (res.ok) {
+        const resData = await res.json();
+        console.log(
+          'Therapist added:',
+          resData.data.firstName,
+          resData.data.middleName,
+          resData.data.lastName,
+        );
+      } else {
+        alert('Failed to add therapist');
+      }
+    } catch (error) {
+      console.log('Failed to add therapist:', error);
+    }
   };
 
   return (
@@ -135,8 +140,8 @@ const AddTherapist = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700">Select Hospital</label>
                 <select
-                  className="focus:border-primary-500 focus:ring-primary-500 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                  value={formData.hospital?.id || ''}
+                  className="focus:border-primary-500 focus:ring-primary-500 mt-1 block w-full rounded-md border-gray-300 px-1 py-2 shadow-sm"
+                  value={formData.hospitalId || ''}
                   onChange={(e) => {
                     handleChange({
                       target: {

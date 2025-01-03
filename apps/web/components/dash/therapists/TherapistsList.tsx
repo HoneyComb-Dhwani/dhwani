@@ -5,73 +5,50 @@ import type { Therapist } from '@/types/therapists';
 import Button from '@/components/common/Button';
 import { Users, Search, Edit, Trash2, Building, Mail, Phone } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { BACKEND_URL } from '@/env';
 
-const TherapistsList = () => {
+type TherapistsListProps = {
+  requestEndpoint: string;
+};
+
+const TherapistsList: React.FC<TherapistsListProps> = ({ requestEndpoint }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedHospital, setSelectedHospital] = useState('');
-  const [hospitals, setHospitals] = useState<Hospital[]>([
-    {
-      id: '1',
-      name: 'City General Hospital',
-      address: {
-        state: 'NY',
-        city: 'New York',
-        country: 'USA',
-        postalCode: '10001',
-      },
-      phoneNumber: 1234567890,
-      code: 'CGH001',
-      email: '123',
-    },
-    {
-      id: '2',
-      name: 'Central Medical Center',
-      address: {
-        state: 'CA',
-        city: 'Los Angeles',
-        country: 'USA',
-        postalCode: '90001',
-      },
-      phoneNumber: 9876543210,
-      code: 'CMC002',
-      email: '123',
-    },
-  ]);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
 
-  const [therapists, setTherapists] = useState<Therapist[]>([
-    {
-      id: '1',
-      userId: 'user1',
-      userRole: 'therapist',
-      hospitalId: '1',
-      hospitalName: 'City General Hospital',
-      hospitalCode: 'CGH001',
-      userCode: 'THR001',
-      firstName: 'John',
-      middleName: 'Robert',
-      lastName: 'Doe',
-      email: 'john.doe@hospital.com',
-      phoneNumber: '1234567890',
-      address: {
-        houseNumber: '123',
-        street: 'Medical Lane',
-        city: 'New York',
-        state: 'NY',
-        country: 'USA',
-        postalCode: '10001',
-      },
-      createdAt: '2024-01-15T00:00:00Z',
-    },
-  ]);
+  const [therapists, setTherapists] = useState<Therapist[]>([]);
 
   useEffect(() => {
-    // Fetch hospitals when component mounts
-    // const fetchHospitals = async () => {
-    //     const response = await fetch('/api/hospitals');
-    //     const data = await response.json();
-    //     setHospitals(data.hospitals);
-    // };
-    // fetchHospitals();
+    const fetchHospitals = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/hospitals?page=1&limit=100`);
+        if (res.ok) {
+          const resData = await res.json();
+          setHospitals(resData.data);
+        } else {
+          console.log('Failed to fetch hospitals');
+        }
+      } catch (error) {
+        console.log('Failed to fetch hospitals:', error);
+      }
+    };
+
+    const fetchTherapists = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}${requestEndpoint}`);
+        if (res.ok) {
+          const resData = await res.json();
+          setTherapists(resData.data);
+        } else {
+          console.log('Failed to fetch therapists');
+        }
+      } catch (error) {
+        console.log('Failed to fetch therapists:', error);
+      }
+    };
+
+    fetchHospitals();
+    fetchTherapists();
   }, []);
 
   const handleSearch = () => {
@@ -123,11 +100,12 @@ const TherapistsList = () => {
               }}
             >
               <option value="">All Hospitals</option>
-              {hospitals.map((hospital) => (
-                <option key={hospital.id} value={hospital.id}>
-                  {hospital.name}
-                </option>
-              ))}
+              {hospitals.length > 0 &&
+                hospitals.map((hospital) => (
+                  <option key={hospital.id} value={hospital.id}>
+                    {hospital.name}
+                  </option>
+                ))}
             </select>
             <div className="w-32">
               <Button onClick={handleSearch}>Search</Button>
@@ -163,62 +141,70 @@ const TherapistsList = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {therapists.map((therapist) => (
-                <tr key={therapist.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <span className="rounded-md bg-gray-100 px-2 py-1 text-sm">
-                      {therapist.userCode}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <Users className="mr-3 h-5 w-5 text-blue-600" />
-                      <span className="font-medium">{getFullName(therapist)}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="space-y-1">
+              {therapists.length > 0 ? (
+                therapists.map((therapist) => (
+                  <tr key={therapist.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">
+                      <span className="rounded-md bg-gray-100 px-2 py-1 text-sm">
+                        {therapist.userCode}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <Mail className="mr-2 h-4 w-4 text-gray-400" />
-                        <span className="text-gray-600">{therapist.email}</span>
+                        <Users className="mr-3 h-5 w-5 text-blue-600" />
+                        <span className="font-medium">{getFullName(therapist)}</span>
                       </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center">
+                          <Mail className="mr-2 h-4 w-4 text-gray-400" />
+                          <span className="text-gray-600">{therapist.email}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Phone className="mr-2 h-4 w-4 text-gray-400" />
+                          <span className="text-gray-600">
+                            {formatPhoneNumber(therapist.phoneNumber)}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <Phone className="mr-2 h-4 w-4 text-gray-400" />
-                        <span className="text-gray-600">
-                          {formatPhoneNumber(therapist.phoneNumber)}
-                        </span>
+                        <Building className="mr-2 h-4 w-4 text-gray-400" />
+                        <div>
+                          <div>{therapist.hospitalName}</div>
+                          <div className="text-sm text-gray-500">{therapist.hospitalCode}</div>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <Building className="mr-2 h-4 w-4 text-gray-400" />
-                      <div>
-                        <div>{therapist.hospitalName}</div>
-                        <div className="text-sm text-gray-500">{therapist.hospitalCode}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-600">
+                        {therapist.address.city}, {therapist.address.state}
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-600">
-                      {therapist.address.city}, {therapist.address.state}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {new Date(therapist.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex space-x-3">
-                      <button className="text-blue-600 hover:text-blue-800">
-                        <Edit className="h-5 w-5" />
-                      </button>
-                      <button className="text-red-600 hover:text-red-800">
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {new Date(therapist.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex space-x-3">
+                        <button className="text-blue-600 hover:text-blue-800">
+                          <Edit className="h-5 w-5" />
+                        </button>
+                        <button className="text-red-600 hover:text-red-800">
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td className="px-6 py-4 text-center" colSpan={7}>
+                    No therapists found
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
