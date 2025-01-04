@@ -6,6 +6,7 @@ import Button from '@/components/common/Button';
 import { Users, Search, Edit, Trash2, Building, Mail, Phone } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { BACKEND_URL } from '@/env';
+import { useAuth } from '@/providers/AuthProvider';
 
 type TherapistsListProps = {
   requestEndpoint: string;
@@ -20,6 +21,7 @@ const TherapistsList: React.FC<TherapistsListProps> = ({ requestEndpoint }) => {
   const [limit] = useState(20);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const { getToken } = useAuth();
 
   const fetchTherapists = async (pageNum: number) => {
     try {
@@ -29,7 +31,7 @@ const TherapistsList: React.FC<TherapistsListProps> = ({ requestEndpoint }) => {
       if (searchTerm) url += `&search=${searchTerm}`;
       if (selectedHospital) url += `&hospitalId=${selectedHospital}`;
 
-      const token = localStorage.getItem('token');
+      const token = getToken();
 
       const res = await fetch(url, {
         headers: {

@@ -6,6 +6,7 @@ import Button from '@/components/common/Button';
 import { Users, Search, Edit, Trash2, Building, Mail } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { BACKEND_URL } from '@/env';
+import { useAuth } from '@/providers/AuthProvider';
 
 const SupervisorsList = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,6 +17,7 @@ const SupervisorsList = () => {
   const [limit] = useState(20);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const { getToken } = useAuth();
 
   const fetchSupervisors = async (pageNum: number) => {
     try {
@@ -25,7 +27,7 @@ const SupervisorsList = () => {
       if (searchTerm) url += `&search=${searchTerm}`;
       if (selectedHospital) url += `&hospitalId=${selectedHospital}`;
 
-      const token = localStorage.getItem('token');
+      const token = getToken();
 
       const res = await fetch(url, {
         headers: {

@@ -15,11 +15,11 @@ const LayoutProvider = ({ children }: LayoutProps) => {
   const [userRole, setUserRole] = useState<'admin' | 'supervisor' | 'therapist' | 'user' | null>(
     null,
   );
-  const { removeToken } = useAuth();
+  const { getToken, removeToken } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = getToken();
     const checkSession = async () => {
       try {
         const res = await fetch(`${BACKEND_URL}/api/v1/auth/session`, {

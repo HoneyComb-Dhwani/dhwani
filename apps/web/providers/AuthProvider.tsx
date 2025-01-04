@@ -4,6 +4,7 @@ import React, { createContext } from 'react';
 
 type AuthContextType = {
   addToken: (token: string) => void;
+  getToken: () => string | null;
   removeToken: () => void;
 };
 
@@ -13,6 +14,7 @@ type AuthProviderProps = {
 
 const AuthContext = createContext<AuthContextType>({
   addToken: (token: string) => {},
+  getToken: () => '',
   removeToken: () => {},
 });
 
@@ -21,11 +23,19 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.setItem('token', token);
   };
 
+  const getToken = () => {
+    return localStorage.getItem('token');
+  };
+
   const removeToken = () => {
     localStorage.removeItem('token');
   };
 
-  return <AuthContext.Provider value={{ addToken, removeToken }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ addToken, getToken, removeToken }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 const useAuth = () => {
