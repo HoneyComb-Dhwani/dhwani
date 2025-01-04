@@ -11,7 +11,7 @@ const addressSchema = z.object({
   postalCode: z.string(),
 });
 
-const CreateConsultationSchema = z.object({
+export const CreateConsultationSchema = z.object({
   hospital: z.object({
     id: createULIDSchema(),
     name: z.string(),

@@ -24,6 +24,7 @@ const PatientsList = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchHospitals = async () => {
@@ -41,6 +42,7 @@ const PatientsList = () => {
     };
 
     const fetchPatients = async () => {
+      setIsLoading(true);
       try {
         const res = await fetch(`${BACKEND_URL}/api/v1/patients?page=${page}&limit=${limit}`);
         if (res.ok) {
@@ -51,6 +53,8 @@ const PatientsList = () => {
         }
       } catch (error) {
         console.log('Failed to fetch patients:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -149,7 +153,13 @@ const PatientsList = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {patients.length > 0 ? (
+              {isLoading ? (
+                <tr>
+                  <td className="px-6 py-4 text-center" colSpan={6}>
+                    Loading...
+                  </td>
+                </tr>
+              ) : Array.isArray(patients) && patients.length > 0 ? (
                 patients.map((patient) => (
                   <tr key={patient.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">

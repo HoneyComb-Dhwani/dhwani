@@ -148,6 +148,9 @@ export class AuthService {
       status: 200,
       message: 'OK',
       prettyMessage: 'Session is valid',
+      data: {
+        role: user.role,
+      },
     };
   }
 }

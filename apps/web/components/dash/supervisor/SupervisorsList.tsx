@@ -25,7 +25,13 @@ const SupervisorsList = () => {
       if (searchTerm) url += `&search=${searchTerm}`;
       if (selectedHospital) url += `&hospitalId=${selectedHospital}`;
 
-      const res = await fetch(url);
+      const token = localStorage.getItem('token');
+
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (res.ok) {
         const resData = await res.json();
         if (pageNum === 1) {

@@ -46,7 +46,9 @@ export class TherapistsService {
     }
 
     if (therapists.length !== 0) {
-      this.redisClient.set(cacheKey, JSON.stringify(therapists));
+      this.redisClient.set(cacheKey, JSON.stringify(therapists), {
+        EX: 1,
+      });
     }
 
     return {
@@ -84,6 +86,12 @@ export class TherapistsService {
 
     if (!therapists) {
       return errors.NOT_FOUND;
+    }
+
+    if (therapists.length !== 0) {
+      this.redisClient.set(cacheKey, JSON.stringify(therapists), {
+        EX: 1,
+      });
     }
 
     return {

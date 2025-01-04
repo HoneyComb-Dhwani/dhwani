@@ -1,12 +1,7 @@
-import Layout from '@/components/dash/Layout';
 import TherapistsList from '@/components/dash/therapists/TherapistsList';
 
 const TherapistsPage = () => {
-  return (
-    <Layout>
-      <TherapistsList />
-    </Layout>
-  );
+  return <TherapistsList requestEndpoint="/api/v1/therapists" />;
 };
 
 export default TherapistsPage;

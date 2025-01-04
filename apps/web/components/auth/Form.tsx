@@ -16,7 +16,7 @@ const Form: React.FC = () => {
     credentials: '',
   });
 
-  const { setToken } = useAuth();
+  const { addToken } = useAuth();
 
   const router = useRouter();
 
@@ -59,7 +59,7 @@ const Form: React.FC = () => {
       if (!resData.data.token) {
         console.log('No token found');
       } else {
-        setToken(resData.data.token);
+        addToken(resData.data.token);
         router.push('/dashboard');
       }
     } catch (error) {
@@ -88,8 +88,9 @@ const Form: React.FC = () => {
       } else if (!resData.data.hospitalId) {
         console.log('No hospitalId found');
       } else {
-        setToken(resData.data.token);
+        addToken(resData.data.token);
         localStorage.setItem('hospitalId', resData.data.hospitalId);
+        router.push('/dashboard');
       }
     } catch (error) {
       console.log(error);
@@ -98,7 +99,6 @@ const Form: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
     if (formType === 'register') {
       handleRegister();
     } else if (formType === 'login') {

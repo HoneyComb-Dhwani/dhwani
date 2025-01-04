@@ -41,11 +41,6 @@ const supervisorMenuItems = [
     href: '/dashboard/supervisors/consultation-requests',
   },
   { icon: ClockIcon, label: 'Sessions', href: '/dashboard/supervisors/sessions' },
-  {
-    icon: MessageSquareIcon,
-    label: 'Consultation Requests',
-    href: '/dashboard/supervisors/consultation-requests',
-  },
 ];
 
 const therapistMenuItems = [

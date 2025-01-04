@@ -1,4 +1,4 @@
-import type { NewAddress, NewTherapist, Therapist } from '../types';
+import type { Address, NewAddress, NewTherapist, Therapist } from '../types';
 import type { ULID } from 'ulid';
 import { db } from '../db';
 import { therapists, hospitals, users, addresses } from '../schema';
@@ -51,7 +51,7 @@ export class TherapistRepository {
   }
 
   async fetchAllTherapists(limit: number, offset: number) {
-    return db
+    const getTherapists = await db
       .select({
         id: therapists.id,
         userId: therapists.userId,
@@ -65,15 +65,16 @@ export class TherapistRepository {
         lastName: therapists.lastName,
         email: therapists.email,
         phoneNumber: therapists.phoneNumber,
-        address: {
-          houseNumber: addresses.houseNumber,
-          blockNumber: addresses.blockNumber,
-          street: addresses.street,
-          city: addresses.city,
-          state: addresses.state,
-          country: addresses.country,
-          postalCode: addresses.postalCode,
-        },
+        addressId: therapists.addressId,
+        address: sql<Address>`jsonb_build_object(
+          'houseNumber', ${addresses.houseNumber},
+          'blockNumber', ${addresses.blockNumber},
+          'street', ${addresses.street},
+          'city', ${addresses.city},
+          'state', ${addresses.state},
+          'country', ${addresses.country},
+          'postalCode', ${addresses.postalCode}
+        )`,
         createdAt: therapists.createdAt,
       })
       .from(therapists)
@@ -83,6 +84,8 @@ export class TherapistRepository {
       .where(eq(therapists.isDeleted, false))
       .limit(limit)
       .offset(offset);
+
+    return getTherapists.length > 0 ? getTherapists : null;
   }
 
   async fetchTherapistById(id: ULID): Promise<Therapist | null> {
@@ -93,19 +96,42 @@ export class TherapistRepository {
     return therapist ?? null;
   }
 
-  async fetchTherapistByHospitalId(
-    hospitalId: ULID,
-    limit: number,
-    offset: number,
-  ): Promise<Therapist | null> {
-    const [therapist] = await db
-      .select()
+  async fetchTherapistByHospitalId(hospitalId: ULID, limit: number, offset: number) {
+    const getTherapists = await db
+      .select({
+        id: therapists.id,
+        userId: therapists.userId,
+        userRole: users.role,
+        hospitalId: therapists.hospitalId,
+        hospitalName: hospitals.name,
+        hospitalCode: hospitals.code,
+        userCode: therapists.userCode,
+        firstName: therapists.firstName,
+        middleName: therapists.middleName,
+        lastName: therapists.lastName,
+        email: therapists.email,
+        phoneNumber: therapists.phoneNumber,
+        addressId: therapists.addressId,
+        address: sql<Address>`jsonb_build_object(
+          'houseNumber', ${addresses.houseNumber},
+          'blockNumber', ${addresses.blockNumber},
+          'street', ${addresses.street},
+          'city', ${addresses.city},
+          'state', ${addresses.state},
+          'country', ${addresses.country},
+          'postalCode', ${addresses.postalCode}
+        )`,
+        createdAt: therapists.createdAt,
+      })
       .from(therapists)
+      .leftJoin(users, eq(therapists.userId, users.id))
+      .leftJoin(addresses, eq(therapists.addressId, addresses.id))
+      .leftJoin(hospitals, eq(therapists.hospitalId, hospitals.id))
       .where(and(eq(therapists.hospitalId, hospitalId), eq(therapists.isDeleted, false)))
       .limit(limit)
       .offset(offset);
 
-    return therapist ?? null;
+    return getTherapists.length > 0 ? getTherapists : null;
   }
 
   async fetchTherapistByUserAndHospitalCode(userCode: string, hospitalCode: string) {

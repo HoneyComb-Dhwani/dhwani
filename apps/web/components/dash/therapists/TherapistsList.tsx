@@ -15,48 +15,82 @@ const TherapistsList: React.FC<TherapistsListProps> = ({ requestEndpoint }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedHospital, setSelectedHospital] = useState('');
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
-
   const [therapists, setTherapists] = useState<Therapist[]>([]);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(20);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
-  useEffect(() => {
-    const fetchHospitals = async () => {
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/v1/hospitals?page=1&limit=100`);
-        if (res.ok) {
-          const resData = await res.json();
-          setHospitals(resData.data);
-        } else {
-          console.log('Failed to fetch hospitals');
-        }
-      } catch (error) {
-        console.log('Failed to fetch hospitals:', error);
-      }
-    };
+  const fetchTherapists = async (pageNum: number) => {
+    try {
+      setIsLoading(true);
+      let url = `${BACKEND_URL}${requestEndpoint}?page=${pageNum}&limit=${limit}`;
 
-    const fetchTherapists = async () => {
-      try {
-        const res = await fetch(`${BACKEND_URL}${requestEndpoint}`);
-        if (res.ok) {
-          const resData = await res.json();
+      if (searchTerm) url += `&search=${searchTerm}`;
+      if (selectedHospital) url += `&hospitalId=${selectedHospital}`;
+
+      const token = localStorage.getItem('token');
+
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        const resData = await res.json();
+        if (pageNum === 1) {
           setTherapists(resData.data);
         } else {
-          console.log('Failed to fetch therapists');
+          setTherapists((prev) => [...prev, ...resData.data]);
         }
-      } catch (error) {
-        console.log('Failed to fetch therapists:', error);
+        setHasMore(resData.data.length === limit);
+      } else {
+        console.log('Failed to fetch therapists');
       }
-    };
+    } catch (error) {
+      console.error('Failed to fetch therapists:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  const fetchHospitals = async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/v1/hospitals?page=1&limit=100`);
+      if (res.ok) {
+        const resData = await res.json();
+        setHospitals(resData.data);
+      } else {
+        console.log('Failed to fetch hospitals');
+      }
+    } catch (error) {
+      console.log('Failed to fetch hospitals:', error);
+    }
+  };
+
+  useEffect(() => {
     fetchHospitals();
-    fetchTherapists();
-  }, []);
+    if (requestEndpoint) {
+      fetchTherapists(1);
+    }
+  }, [requestEndpoint]);
 
   const handleSearch = () => {
-    console.log('Searching with:', { searchTerm });
+    setPage(1);
+    fetchTherapists(1);
   };
 
   const handleHospitalFilter = (hospitalId: string) => {
-    console.log('Filtering by hospital:', hospitalId);
+    setPage(1);
+    setSelectedHospital(hospitalId);
+    fetchTherapists(1);
+  };
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchTherapists(nextPage);
   };
 
   const formatPhoneNumber = (phone: string) => {
@@ -94,18 +128,14 @@ const TherapistsList: React.FC<TherapistsListProps> = ({ requestEndpoint }) => {
             <select
               className="rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={selectedHospital}
-              onChange={(e) => {
-                setSelectedHospital(e.target.value);
-                handleHospitalFilter(e.target.value);
-              }}
+              onChange={(e) => handleHospitalFilter(e.target.value)}
             >
               <option value="">All Hospitals</option>
-              {hospitals.length > 0 &&
-                hospitals.map((hospital) => (
-                  <option key={hospital.id} value={hospital.id}>
-                    {hospital.name}
-                  </option>
-                ))}
+              {hospitals.map((hospital) => (
+                <option key={hospital.id} value={hospital.id}>
+                  {hospital.name}
+                </option>
+              ))}
             </select>
             <div className="w-32">
               <Button onClick={handleSearch}>Search</Button>
@@ -208,6 +238,47 @@ const TherapistsList: React.FC<TherapistsListProps> = ({ requestEndpoint }) => {
             </tbody>
           </table>
         </div>
+        {therapists.length > 0 && (
+          <div className="flex justify-center border-t p-4">
+            {hasMore ? (
+              <button
+                onClick={handleLoadMore}
+                disabled={isLoading}
+                className="rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600 disabled:bg-blue-300"
+              >
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <svg
+                      className="h-5 w-5 animate-spin"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    Loading...
+                  </span>
+                ) : (
+                  'Load More'
+                )}
+              </button>
+            ) : (
+              <p className="text-gray-500">No more therapists to load</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

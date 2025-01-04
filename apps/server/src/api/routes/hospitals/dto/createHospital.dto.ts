@@ -11,7 +11,7 @@ export const CreateHospitalSchema = z.object({
     country: z.string(),
     postalCode: z.string(),
   }),
-  phoneNumber: z.number(),
+  phoneNumber: z.string(),
   code: z.string(),
   email: z.string().email(),
 });

@@ -1,64 +1,31 @@
-import { BACKEND_URL } from '@/env';
-import { useRouter } from 'next/navigation';
+'use client';
+
 import React, { createContext } from 'react';
 
 type AuthContextType = {
-  token: string | null;
-  setToken: (token: string) => void;
+  addToken: (token: string) => void;
   removeToken: () => void;
 };
 
+type AuthProviderProps = {
+  children: React.ReactNode;
+};
+
 const AuthContext = createContext<AuthContextType>({
-  token: null,
-  setToken: () => {},
+  addToken: (token: string) => {},
   removeToken: () => {},
 });
 
-const AuthProvider: React.FC = ({ children }: { children: React.ReactNode }) => {
-  const [token, setToken] = React.useState<string | null>(null);
-
-  const router = useRouter();
+const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const addToken = (token: string) => {
+    localStorage.setItem('token', token);
+  };
 
   const removeToken = () => {
-    setToken(null);
     localStorage.removeItem('token');
   };
 
-  React.useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/v1/auth/session`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          console.log(data.message);
-          removeToken();
-          router.push('/auth');
-        }
-      } catch (error) {
-        console.log(error);
-        removeToken();
-        router.push('/auth');
-      }
-    };
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-      removeToken();
-      router.push('/auth');
-    }
-
-    checkSession();
-  }, []);
-
-  return (
-    <AuthContext.Provider value={{ token, setToken, removeToken }}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ addToken, removeToken }}>{children}</AuthContext.Provider>;
 };
 
 const useAuth = () => {

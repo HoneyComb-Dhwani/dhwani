@@ -3,6 +3,7 @@ import { ulidType } from '../types';
 import { ULID, ulid } from 'ulid';
 import { users } from './users';
 import { addresses } from './addresses';
+import { hospitals } from './hospitals';
 
 export const therapists = pgTable('therapists', {
   id: ulidType('id')
@@ -30,7 +31,9 @@ export const therapists = pgTable('therapists', {
     primaryKey: false,
     default: ulid,
     foreignKey: true,
-  }),
+  })
+    .notNull()
+    .references(() => hospitals.id),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   deletedAt: timestamp('deleted_at'),

@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Req, UseInterceptors, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   LoginDto,
@@ -10,6 +19,7 @@ import {
 } from './dto';
 import { ResponseInterceptor } from 'src/api/interceptors';
 import { ZodValidationPipe } from 'src/pipes';
+import { AuthGuard } from 'src/api/guards';
 
 @Controller('auth')
 @UseInterceptors(ResponseInterceptor)
@@ -35,6 +45,7 @@ export class AuthController {
   }
 
   @Get('/session')
+  @UseGuards(AuthGuard)
   async session(@Req() req) {
     const user = req.user;
     return this.authService.checkUserSession(user);

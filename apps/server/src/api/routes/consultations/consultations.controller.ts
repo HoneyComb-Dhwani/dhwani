@@ -1,11 +1,23 @@
 import type { ULID } from 'ulid';
 import type { NewConsultation } from 'src/database';
-import type { CreateConsultationDto } from './dto';
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req } from '@nestjs/common';
+import { CreateConsultationSchema, type CreateConsultationDto } from './dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+  UsePipes,
+} from '@nestjs/common';
 import { ConsultationsService } from './consultations.service';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/api/guards';
 import { errors } from 'src/api/constants';
+import { ZodValidationPipe } from 'src/pipes';
 
 @Controller('consultations')
 export class ConsultationsController {
@@ -13,6 +25,7 @@ export class ConsultationsController {
 
   @Post('/')
   @UseGuards(AuthGuard)
+  @UsePipes(new ZodValidationPipe(CreateConsultationSchema))
   async createConsultation(@Req() req, @Body() consultationsData: CreateConsultationDto) {
     const userId = req.user.id;
 

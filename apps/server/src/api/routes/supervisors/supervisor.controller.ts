@@ -10,9 +10,11 @@ import {
   Put,
   Query,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { SupervisorService } from './supervisor.service';
 import { ResponseInterceptor } from 'src/api/interceptors';
+import { AdminGuard } from 'src/api/guards';
 
 @Controller('supervisors')
 @UseInterceptors(ResponseInterceptor)
@@ -20,11 +22,13 @@ export class SupervisorController {
   constructor(private readonly supervisorService: SupervisorService) {}
 
   @Post('/')
+  @UseGuards(AdminGuard)
   async create(@Body() body: NewSupervisor) {
     return this.supervisorService.createSupervisor(body);
   }
 
   @Get('/')
+  @UseGuards(AdminGuard)
   async findAll(@Query('page') page: number, @Query('limit') limit: number) {
     return this.supervisorService.fetchAllSupervisors(page, limit);
   }

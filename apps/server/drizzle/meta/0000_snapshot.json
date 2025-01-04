@@ -1,5 +1,5 @@
 {
-  "id": "75af4b0f-b2fa-490d-801d-369e314146b7",
+  "id": "53272e97-1f2e-41aa-96cf-6f36848705bc",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -234,7 +234,7 @@
         },
         "phone_number": {
           "name": "phone_number",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -602,7 +602,7 @@
           "name": "hospital_id",
           "type": "char(26)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -653,6 +653,19 @@
           "tableTo": "addresses",
           "columnsFrom": [
             "address_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "therapists_hospital_id_hospitals_id_fk": {
+          "name": "therapists_hospital_id_hospitals_id_fk",
+          "tableFrom": "therapists",
+          "tableTo": "hospitals",
+          "columnsFrom": [
+            "hospital_id"
           ],
           "columnsTo": [
             "id"

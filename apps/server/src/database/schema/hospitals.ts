@@ -14,7 +14,7 @@ export const hospitals = pgTable('hospitals', {
     foreignKey: true,
   }).references(() => addresses.id),
   email: text('email').notNull(),
-  phoneNumber: integer('phone_number').notNull(),
+  phoneNumber: text('phone_number').notNull(),
   code: text('code').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),

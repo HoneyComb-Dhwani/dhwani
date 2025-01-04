@@ -8,12 +8,14 @@ import {
   Put,
   Query,
   UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import { NewHospital } from 'src/database';
 import { HospitalService } from './hospitals.service';
 import { ULID } from 'ulid';
-import { CreateHospitalDto } from './dto';
+import { CreateHospitalDto, CreateHospitalSchema } from './dto';
 import { ResponseInterceptor } from 'src/api/interceptors';
+import { ZodValidationPipe } from 'src/pipes';
 
 @Controller('hospitals')
 @UseInterceptors(ResponseInterceptor)
@@ -21,6 +23,7 @@ export class HospitalController {
   constructor(private readonly hospitalsService: HospitalService) {}
 
   @Post('/')
+  @UsePipes(new ZodValidationPipe(CreateHospitalSchema))
   async create(@Body() body: CreateHospitalDto) {
     return this.hospitalsService.createHospital(body);
   }

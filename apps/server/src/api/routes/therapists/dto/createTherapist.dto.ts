@@ -1,7 +1,7 @@
 import { createULIDSchema } from 'src/api/utils/ulid.utils';
 import { z } from 'zod';
 
-export const createTherapistDto = z.object({
+export const CreateTherapistSchema = z.object({
   firstName: z.string(),
   middleName: z.string(),
   lastName: z.string(),
@@ -17,4 +17,4 @@ export const createTherapistDto = z.object({
   hospitalId: createULIDSchema(),
 });
 
-export type CreateTherapistDto = z.infer<typeof createTherapistDto>;
+export type CreateTherapistDto = z.infer<typeof CreateTherapistSchema>;
