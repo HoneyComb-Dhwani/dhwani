@@ -51,7 +51,7 @@ export class ConsultationsRepository {
       }
 
       const consultData = {
-        patientId: insertPatient[0].id,
+        patientId: insertPatient.id,
         status: 'pending',
       };
 

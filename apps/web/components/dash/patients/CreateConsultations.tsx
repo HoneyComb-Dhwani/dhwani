@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
+import { BACKEND_URL } from '@/env';
+import { useAuth } from '@/providers/AuthProvider';
+import Select from '@/components/common/Select';
 
 interface Address {
   houseNumber?: string;
@@ -26,6 +29,7 @@ interface PersonalDetails {
   firstName: string;
   middleName: string;
   lastName: string;
+  gender: 'Male' | 'Female' | 'Other';
   email: string;
   phoneNumber: string;
   dateOfBirth: string;
@@ -39,37 +43,6 @@ interface FormData {
   emergencyContactPhone: string;
 }
 
-const hospitals: Hospital[] = [
-  {
-    id: '1',
-    name: 'City General Hospital',
-    code: 'CGH001',
-    phoneNumber: 1234567890,
-    address: {
-      houseNumber: '123',
-      street: 'Medical Lane',
-      city: 'New York',
-      state: 'NY',
-      country: 'USA',
-      postalCode: '10001',
-    },
-  },
-  {
-    id: '2',
-    name: 'Central Medical Center',
-    code: 'CMC002',
-    phoneNumber: 9876543210,
-    address: {
-      blockNumber: 'B4',
-      street: 'Health Avenue',
-      city: 'Los Angeles',
-      state: 'CA',
-      country: 'USA',
-      postalCode: '90001',
-    },
-  },
-];
-
 const AddConsultation = () => {
   const [formData, setFormData] = useState<FormData>({
     hospital: null,
@@ -77,11 +50,15 @@ const AddConsultation = () => {
       firstName: '',
       middleName: '',
       lastName: '',
+      gender: 'Male',
       email: '',
       phoneNumber: '',
       dateOfBirth: '',
     },
     address: {
+      houseNumber: '',
+      blockNumber: '',
+      street: '',
       city: '',
       state: '',
       country: '',
@@ -90,6 +67,32 @@ const AddConsultation = () => {
     emergencyContactName: '',
     emergencyContactPhone: '',
   });
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
+  const { getToken } = useAuth();
+
+  const genderOptions = [
+    { value: 'Male', label: 'Male' },
+    { value: 'Female', label: 'Female' },
+    { value: 'Other', label: 'Other' },
+  ];
+
+  const fetchHospitals = async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/v1/hospitals?page=1&limit=100`);
+      if (res.ok) {
+        const resData = await res.json();
+        setHospitals(resData.data);
+      } else {
+        console.log('Failed to fetch hospitals');
+      }
+    } catch (error) {
+      console.log('Failed to fetch hospitals:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchHospitals();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -117,15 +120,59 @@ const AddConsultation = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const submissionData = {
-      ...formData,
-      createdAt: new Date().toISOString(),
+    const submitData = {
+      hospital: {
+        id: formData.hospital.id,
+        name: formData.hospital.name,
+        address: formData.hospital.address,
+        phoneNumber: formData.hospital.phoneNumber.toString(),
+        code: formData.hospital.code,
+      },
+      details: {
+        firstName: formData.details.firstName,
+        middleName: formData.details.middleName || undefined,
+        lastName: formData.details.lastName,
+        gender: formData.details.gender,
+        email: formData.details.email,
+        phoneNumber: formData.details.phoneNumber || undefined,
+        dateOfBirth: formData.details.dateOfBirth,
+      },
+      address: {
+        houseNumber: formData.address.houseNumber || undefined,
+        blockNumber: formData.address.blockNumber || undefined,
+        street: formData.address.street || undefined,
+        city: formData.address.city,
+        state: formData.address.state,
+        country: formData.address.country,
+        postalCode: formData.address.postalCode,
+      },
+      emergencyContactName: formData.emergencyContactName,
+      emergencyContactPhone: formData.emergencyContactPhone,
     };
 
-    console.log('Patient Registration Data:', submissionData);
+    try {
+      const token = getToken();
+      const res = await fetch(`${BACKEND_URL}/api/v1/consultations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(submitData),
+      });
+
+      if (res.ok) {
+        alert('Consultation booked successfully');
+      } else {
+        alert('Failed to book consultation');
+        console.log('Failed to book consultation');
+      }
+    } catch (error) {
+      console.log('Failed to book consultation:', error);
+    }
   };
 
   return (
@@ -205,6 +252,18 @@ const AddConsultation = () => {
                   })
                 }
               />
+              <Select
+                label="Gender"
+                value={formData.details.gender}
+                onChange={(e) =>
+                  handleChange({
+                    ...e,
+                    target: { ...e.target, name: 'details.gender' },
+                  })
+                }
+                options={genderOptions}
+                required
+              />
               <Input
                 label="Email"
                 type="email"
@@ -247,6 +306,30 @@ const AddConsultation = () => {
           <div className="border-t pt-6">
             <h3 className="mb-4 text-lg font-medium text-gray-900">Address Details</h3>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <Input
+                label="House Number"
+                type="text"
+                placeholder="Enter house number"
+                value={formData.address.houseNumber || ''}
+                onChange={(e) =>
+                  handleChange({
+                    ...e,
+                    target: { ...e.target, name: 'address.houseNumber' },
+                  })
+                }
+              />
+              <Input
+                label="Block Number"
+                type="text"
+                placeholder="Enter block number"
+                value={formData.address.blockNumber || ''}
+                onChange={(e) =>
+                  handleChange({
+                    ...e,
+                    target: { ...e.target, name: 'address.blockNumber' },
+                  })
+                }
+              />
               <Input
                 label="City"
                 type="text"

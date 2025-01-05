@@ -7,6 +7,7 @@ import { Users, Search, Edit, Trash2, Building, Mail } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { BACKEND_URL } from '@/env';
 import { useAuth } from '@/providers/AuthProvider';
+import Table from '@/components/common/Table';
 
 const SupervisorsList = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,6 +19,23 @@ const SupervisorsList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const { getToken } = useAuth();
+
+  const columns = [
+    {
+      key: 'userCode',
+      header: 'User Code',
+      icon: <Users className="mr-3 h-5 w-5 text-blue-600" />,
+    },
+    { key: 'userName', header: 'Name' },
+    { key: 'userEmail', header: 'Email', icon: <Mail className="mr-3 h-5 w-5 text-blue-600" /> },
+    {
+      key: 'hospitalName',
+      header: 'Hospital',
+      icon: <Building className="mr-3 h-5 w-5 text-blue-600" />,
+    },
+    { key: 'hospitalCode', header: 'Hospital Code' },
+    { key: 'createdAt', header: 'Added Date' },
+  ];
 
   const fetchSupervisors = async (pageNum: number) => {
     try {
@@ -137,93 +155,7 @@ const SupervisorsList = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  User Code
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Email
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Hospital
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Hospital Code
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Added Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
-              {supervisors.length > 0 ? (
-                supervisors.map((supervisor) => (
-                  <tr key={supervisor.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <span className="rounded-md bg-gray-100 px-2 py-1 text-sm">
-                        {supervisor.userCode}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <Users className="mr-3 h-5 w-5 text-blue-600" />
-                        <span className="font-medium">{supervisor.userName}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <Mail className="mr-2 h-4 w-4 text-gray-400" />
-                        <span className="text-gray-600">{supervisor.userEmail}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <Building className="mr-2 h-4 w-4 text-gray-400" />
-                        <span>{supervisor.hospitalName}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="rounded-md bg-gray-100 px-2 py-1 text-sm">
-                        {supervisor.hospitalCode}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {new Date(supervisor.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex space-x-3">
-                        <button
-                          onClick={() =>
-                            (window.location.href = `/dashboard/admin/supervisors/${supervisor.id}/edit`)
-                          }
-                          className="text-blue-600 hover:text-blue-800"
-                        >
-                          <Edit className="h-5 w-5" />
-                        </button>
-                        <button className="text-red-600 hover:text-red-800">
-                          <Trash2 className="h-5 w-5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={7} className="py-4 text-center text-gray-500">
-                    No supervisors found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <Table columns={columns} data={supervisors} />
         </div>
 
         {supervisors.length > 0 && (

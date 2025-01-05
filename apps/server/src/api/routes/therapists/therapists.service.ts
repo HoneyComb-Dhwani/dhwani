@@ -47,7 +47,7 @@ export class TherapistsService {
 
     if (therapists.length !== 0) {
       this.redisClient.set(cacheKey, JSON.stringify(therapists), {
-        EX: 1,
+        EX: 60 * 5,
       });
     }
 
@@ -90,7 +90,7 @@ export class TherapistsService {
 
     if (therapists.length !== 0) {
       this.redisClient.set(cacheKey, JSON.stringify(therapists), {
-        EX: 1,
+        EX: 60 * 5,
       });
     }
 

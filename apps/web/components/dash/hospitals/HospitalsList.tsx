@@ -3,6 +3,7 @@
 import type { Hospital } from '@/types/hospitals';
 import Button from '@/components/common/Button';
 import { Building, Search, Edit, Trash2, MapPin, Phone } from 'lucide-react';
+import Table from '@/components/common/Table';
 import { useEffect, useState } from 'react';
 import { BACKEND_URL } from '@/env';
 
@@ -15,6 +16,36 @@ const HospitalsList = () => {
   const [locations, setLocations] = useState<string[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+
+  const columns = [
+    {
+      key: 'name',
+      header: 'Hospital',
+      icon: <Building className="mr-3 h-5 w-5 text-blue-600" />,
+      render: (value: string) => <span className="font-medium">{value}</span>,
+    },
+    {
+      key: 'code',
+      header: 'Code',
+      render: (value: string) => (
+        <span className="rounded-md bg-gray-100 px-2 py-1 text-sm">{value}</span>
+      ),
+    },
+    {
+      key: 'phoneNumber',
+      header: 'Phone',
+      icon: <Phone className="mr-2 h-4 w-4 text-gray-400" />,
+      render: (value: string) => formatPhoneNumber(value),
+    },
+    {
+      key: 'address',
+      header: 'Address',
+      icon: <MapPin className="mr-2 h-4 w-4 text-gray-400" />,
+      render: (value: Hospital['address']) => (
+        <span className="text-sm text-gray-600">{formatAddress(value)}</span>
+      ),
+    },
+  ];
 
   const fetchHospitals = async (pageNum: number) => {
     try {
@@ -69,7 +100,7 @@ const HospitalsList = () => {
     return parts.join(', ');
   };
 
-  const formatPhoneNumber = (phone: number) => {
+  const formatPhoneNumber = (phone: string) => {
     return phone.toString().replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
   };
 
@@ -119,76 +150,7 @@ const HospitalsList = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Hospital
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Code
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Phone
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Address
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
-              {hospitals.length > 0 ? (
-                hospitals.map((hospital) => (
-                  <tr key={hospital.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <Building className="mr-3 h-5 w-5 text-blue-600" />
-                        <span className="font-medium">{hospital.name}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="rounded-md bg-gray-100 px-2 py-1 text-sm">
-                        {hospital.code}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <Phone className="mr-2 h-4 w-4 text-gray-400" />
-                        {formatPhoneNumber(hospital.phoneNumber)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <MapPin className="mr-2 h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formatAddress(hospital.address)}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex space-x-3">
-                        <button className="text-blue-600 hover:text-blue-800">
-                          <Edit className="h-5 w-5" />
-                        </button>
-                        <button className="text-red-600 hover:text-red-800">
-                          <Trash2 className="h-5 w-5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="py-4 text-center text-gray-500">
-                    No hospitals found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <Table columns={columns} data={hospitals} />
           {hospitals.length > 0 && (
             <div className="flex justify-center border-t p-4">
               {hasMore ? (

@@ -16,6 +16,8 @@ import {
 import { useState, useEffect } from 'react';
 import { Patient } from '@/types/patients';
 import { BACKEND_URL } from '@/env';
+import { useAuth } from '@/providers/AuthProvider';
+import Table from '@/components/common/Table';
 
 const PatientsList = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -25,41 +27,130 @@ const PatientsList = () => {
   const [limit, setLimit] = useState(10);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const { getToken } = useAuth();
 
-  useEffect(() => {
-    const fetchHospitals = async () => {
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/v1/hospitals?page=1&limit=100`);
-        if (res.ok) {
-          const resData = await res.json();
-          setHospitals(resData.data);
-        } else {
-          console.log('Failed to fetch hospitals');
-        }
-      } catch (error) {
-        console.log('Failed to fetch hospitals:', error);
-      }
-    };
+  const columns = [
+    {
+      key: 'details',
+      header: 'Patient',
+      icon: <Users className="mr-3 h-5 w-5 text-blue-600" />,
+      render: (_: any, patient: Patient) => (
+        <div>
+          <div className="font-medium">{getFullName(patient)}</div>
+          <div className="text-sm text-gray-500">
+            <Calendar className="mr-1 inline h-4 w-4" />
+            {formatDate(patient.details.dateOfBirth)}
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'contactInfo',
+      header: 'Contact Info',
+      render: (_: any, patient: Patient) => (
+        <div className="space-y-1">
+          <div className="flex items-center">
+            <Mail className="mr-2 h-4 w-4 text-gray-400" />
+            <span className="text-gray-600">{patient.details.email}</span>
+          </div>
+          <div className="flex items-center">
+            <Phone className="mr-2 h-4 w-4 text-gray-400" />
+            <span className="text-gray-600">{formatPhoneNumber(patient.details.phoneNumber)}</span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'hospital',
+      header: 'Hospital',
+      icon: <Building className="mr-2 h-4 w-4 text-gray-400" />,
+      render: (_: any, patient: Patient) => <span>{patient.hospitalName}</span>,
+    },
+    {
+      key: 'emergency',
+      header: 'Emergency Contact',
+      render: (_: any, patient: Patient) => (
+        <div className="space-y-1">
+          <div className="flex items-center">
+            <AlertCircle className="mr-2 h-4 w-4 text-red-400" />
+            <span className="font-medium">{patient.emergencyContactName}</span>
+          </div>
+          <div className="text-sm text-gray-500">
+            {formatPhoneNumber(patient.emergencyContactPhone)}
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'address',
+      header: 'Location',
+      render: (address: Patient['address']) => (
+        <div className="text-sm text-gray-600">
+          {address.city}, {address.state}
+        </div>
+      ),
+    },
+  ];
 
-    const fetchPatients = async () => {
-      setIsLoading(true);
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/v1/patients?page=${page}&limit=${limit}`);
-        if (res.ok) {
-          const resData = await res.json();
+  const fetchPatients = async (pageNum: number) => {
+    setIsLoading(true);
+    try {
+      let url = `${BACKEND_URL}/api/v1/patients?page=${pageNum}&limit=${limit}`;
+
+      if (searchTerm) url += `&search=${searchTerm}`;
+      if (selectedHospital) url += `&hospitalId=${selectedHospital}`;
+
+      const token = getToken();
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        const resData = await res.json();
+        if (pageNum === 1) {
           setPatients(resData.data);
         } else {
-          console.log('Failed to fetch patients');
+          setPatients((prev) => [...prev, ...resData.data]);
         }
-      } catch (error) {
-        console.log('Failed to fetch patients:', error);
-      } finally {
-        setIsLoading(false);
+        setHasMore(resData.data.length === limit);
+      } else {
+        console.log('Failed to fetch patients');
       }
-    };
+    } catch (error) {
+      console.log('Failed to fetch patients:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  const fetchHospitals = async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/v1/hospitals?page=1&limit=100`);
+      if (res.ok) {
+        const resData = await res.json();
+        setHospitals(resData.data);
+      } else {
+        console.log('Failed to fetch hospitals');
+      }
+    } catch (error) {
+      console.log('Failed to fetch hospitals:', error);
+    }
+  };
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchPatients(nextPage);
+  };
+
+  useEffect(() => {
     fetchHospitals();
-    fetchPatients();
+    fetchPatients(1);
   }, [page, limit]);
 
   const handleSearch = () => {
@@ -129,108 +220,48 @@ const PatientsList = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Patient
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Contact Info
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Hospital
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Emergency Contact
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
-              {isLoading ? (
-                <tr>
-                  <td className="px-6 py-4 text-center" colSpan={6}>
-                    Loading...
-                  </td>
-                </tr>
-              ) : Array.isArray(patients) && patients.length > 0 ? (
-                patients.map((patient) => (
-                  <tr key={patient.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <Users className="mr-3 h-5 w-5 text-blue-600" />
-                        <div>
-                          <div className="font-medium">{getFullName(patient)}</div>
-                          <div className="text-sm text-gray-500">
-                            <Calendar className="mr-1 inline h-4 w-4" />
-                            {formatDate(patient.details.dateOfBirth)}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center">
-                          <Mail className="mr-2 h-4 w-4 text-gray-400" />
-                          <span className="text-gray-600">{patient.details.email}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <Phone className="mr-2 h-4 w-4 text-gray-400" />
-                          <span className="text-gray-600">
-                            {formatPhoneNumber(patient.details.phoneNumber)}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <Building className="mr-2 h-4 w-4 text-gray-400" />
-                        <span>{patient.hospitalName}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center">
-                          <AlertCircle className="mr-2 h-4 w-4 text-red-400" />
-                          <span className="font-medium">{patient.emergencyContactName}</span>
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {formatPhoneNumber(patient.emergencyContactPhone)}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-600">
-                        {patient.address.city}, {patient.address.state}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex space-x-3">
-                        <button className="text-blue-600 hover:text-blue-800">
-                          <Edit className="h-5 w-5" />
-                        </button>
-                        <button className="text-red-600 hover:text-red-800">
-                          <Trash2 className="h-5 w-5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+          <Table columns={columns} data={patients} />
+          {patients.length > 0 && (
+            <div className="flex justify-center border-t p-4">
+              {hasMore ? (
+                <button
+                  onClick={handleLoadMore}
+                  disabled={isLoading}
+                  className="rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600 disabled:bg-blue-300"
+                >
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <svg
+                        className="h-5 w-5 animate-spin"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Loading...
+                    </span>
+                  ) : (
+                    'Load More'
+                  )}
+                </button>
               ) : (
-                <tr>
-                  <td className="px-6 py-4 text-center" colSpan={6}>
-                    No patients found
-                  </td>
-                </tr>
+                <p className="text-gray-500">No more patients to load</p>
               )}
-            </tbody>
-          </table>
+            </div>
+          )}
         </div>
       </div>
     </div>

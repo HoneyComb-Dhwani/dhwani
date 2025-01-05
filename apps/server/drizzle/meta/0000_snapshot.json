@@ -1,5 +1,5 @@
 {
-  "id": "53272e97-1f2e-41aa-96cf-6f36848705bc",
+  "id": "7b680f19-7455-421c-b9e4-a4c08b19beaf",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -112,7 +112,7 @@
           "name": "therapist_id",
           "type": "char(26)",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": null
         },
         "status": {

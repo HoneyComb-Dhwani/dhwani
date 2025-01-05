@@ -19,7 +19,7 @@ CREATE TABLE "addresses" (
 CREATE TABLE "consultations" (
 	"id" char(26) PRIMARY KEY NOT NULL,
 	"patient_id" char(26),
-	"therapist_id" char(26) DEFAULT null NOT NULL,
+	"therapist_id" char(26) DEFAULT null,
 	"status" "status" DEFAULT 'pending' NOT NULL,
 	"diagnosis" text,
 	"treatment_plan" text,

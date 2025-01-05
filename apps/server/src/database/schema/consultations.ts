@@ -13,7 +13,6 @@ export const consultations = pgTable('consultations', {
   patientId: ulidType('patient_id', { foreignKey: true }).references(() => patients.id),
   therapistId: ulidType('therapist_id', { foreignKey: true })
     .references(() => therapists.id)
-    .notNull()
     .default(null),
   status: statusEnums('status').notNull().default('pending'),
   diagnosis: text('diagnosis'),

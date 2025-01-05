@@ -10,7 +10,7 @@ export type Hospital = {
     country: string;
     postalCode: string;
   };
-  phoneNumber: number;
+  phoneNumber: string;
   code: string;
   email: string;
 };

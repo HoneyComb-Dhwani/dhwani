@@ -1,4 +1,4 @@
-import { createULIDSchema } from 'src/api/utils/ulid.utils';
+import { createULIDSchema } from 'src/api/utils';
 import { z } from 'zod';
 
 const addressSchema = z.object({

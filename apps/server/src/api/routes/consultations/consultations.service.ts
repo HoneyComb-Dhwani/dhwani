@@ -16,8 +16,7 @@ export class ConsultationsService {
     consultationData: CreateConsultationDto,
   ): Promise<ReturnResponse | ReturnError> {
     const checkPatientExists = await patientsRepository.fetchPatientByUserId(userId);
-
-    if (checkPatientExists === null) {
+    if (checkPatientExists !== null) {
       return errors.CONFLICT;
     }
 

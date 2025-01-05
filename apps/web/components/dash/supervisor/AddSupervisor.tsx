@@ -5,6 +5,7 @@ import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
 import type { Hospital } from '@/types/hospitals';
 import { BACKEND_URL } from '@/env';
+import { useAuth } from '@/providers/AuthProvider';
 
 const AddSupervisor = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ const AddSupervisor = () => {
   });
 
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
+
+  const { getToken } = useAuth();
 
   const fetchHospitals = async () => {
     try {
@@ -36,10 +39,12 @@ const AddSupervisor = () => {
     e.preventDefault();
 
     try {
+      const token = getToken();
       const res = await fetch(`${BACKEND_URL}/api/v1/supervisors`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });

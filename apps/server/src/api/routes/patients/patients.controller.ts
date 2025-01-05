@@ -1,7 +1,8 @@
 import type { ULID } from 'ulid';
 import type { NewPatient } from 'src/database';
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { PatientsService } from './patients.service';
+import { AdminGuard } from 'src/api/guards';
 
 @Controller('patients')
 export class PatientsController {
@@ -13,6 +14,7 @@ export class PatientsController {
   }
 
   @Get()
+  @UseGuards(AdminGuard)
   async fetchAllPatients(@Query('page') page: number, @Query('limit') limit: number) {
     return this.patientsService.fetchAllPatients(page, limit);
   }

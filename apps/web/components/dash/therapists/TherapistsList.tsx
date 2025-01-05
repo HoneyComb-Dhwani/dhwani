@@ -7,6 +7,7 @@ import { Users, Search, Edit, Trash2, Building, Mail, Phone } from 'lucide-react
 import { useState, useEffect } from 'react';
 import { BACKEND_URL } from '@/env';
 import { useAuth } from '@/providers/AuthProvider';
+import Table from '@/components/common/Table';
 
 type TherapistsListProps = {
   requestEndpoint: string;
@@ -22,6 +23,65 @@ const TherapistsList: React.FC<TherapistsListProps> = ({ requestEndpoint }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const { getToken } = useAuth();
+
+  const columns = [
+    {
+      key: 'userCode',
+      header: 'User Code',
+      render: (value) => <span className="rounded-md bg-gray-100 px-2 py-1 text-sm">{value}</span>,
+    },
+    {
+      key: 'name',
+      header: 'Name',
+      icon: <Users className="mr-3 h-5 w-5 text-blue-600" />,
+      render: (_, rowData: Therapist) => (
+        <span className="font-medium">{getFullName(rowData)}</span>
+      ),
+    },
+    {
+      key: 'contactInfo',
+      header: 'Contact Info',
+      render: (_, rowData: Therapist) => (
+        <div className="space-y-1">
+          <div className="flex items-center">
+            <Mail className="mr-2 h-4 w-4 text-gray-400" />
+            <span className="text-gray-600">{rowData.email}</span>
+          </div>
+          <div className="flex items-center">
+            <Phone className="mr-2 h-4 w-4 text-gray-400" />
+            <span className="text-gray-600">{formatPhoneNumber(rowData.phoneNumber)}</span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'hospital',
+      header: 'Hospital',
+      icon: <Building className="mr-2 h-4 w-4 text-gray-400" />,
+      render: (_, rowData: Therapist) => (
+        <div>
+          <div>{rowData.hospitalName}</div>
+          <div className="text-sm text-gray-500">{rowData.hospitalCode}</div>
+        </div>
+      ),
+    },
+    {
+      key: 'address',
+      header: 'Location',
+      render: (address) => (
+        <div className="text-sm text-gray-600">
+          {address.city}, {address.state}
+        </div>
+      ),
+    },
+    {
+      key: 'createdAt',
+      header: 'Added Date',
+      render: (value) => (
+        <span className="text-sm text-gray-500">{new Date(value).toLocaleDateString()}</span>
+      ),
+    },
+  ];
 
   const fetchTherapists = async (pageNum: number) => {
     try {
@@ -146,99 +206,7 @@ const TherapistsList: React.FC<TherapistsListProps> = ({ requestEndpoint }) => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  User Code
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Contact Info
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Hospital
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Added Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
-              {therapists.length > 0 ? (
-                therapists.map((therapist) => (
-                  <tr key={therapist.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <span className="rounded-md bg-gray-100 px-2 py-1 text-sm">
-                        {therapist.userCode}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <Users className="mr-3 h-5 w-5 text-blue-600" />
-                        <span className="font-medium">{getFullName(therapist)}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center">
-                          <Mail className="mr-2 h-4 w-4 text-gray-400" />
-                          <span className="text-gray-600">{therapist.email}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <Phone className="mr-2 h-4 w-4 text-gray-400" />
-                          <span className="text-gray-600">
-                            {formatPhoneNumber(therapist.phoneNumber)}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <Building className="mr-2 h-4 w-4 text-gray-400" />
-                        <div>
-                          <div>{therapist.hospitalName}</div>
-                          <div className="text-sm text-gray-500">{therapist.hospitalCode}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-600">
-                        {therapist.address.city}, {therapist.address.state}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {new Date(therapist.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex space-x-3">
-                        <button className="text-blue-600 hover:text-blue-800">
-                          <Edit className="h-5 w-5" />
-                        </button>
-                        <button className="text-red-600 hover:text-red-800">
-                          <Trash2 className="h-5 w-5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td className="px-6 py-4 text-center" colSpan={7}>
-                    No therapists found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <Table columns={columns} data={therapists} />
         </div>
         {therapists.length > 0 && (
           <div className="flex justify-center border-t p-4">

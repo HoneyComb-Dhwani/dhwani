@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { ULID } from 'ulid';
-import { createULIDSchema } from 'src/api/utils/ulid.utils';
+import { createULIDSchema } from 'src/api/utils';
 
 export const WorkLoginSchema = z.object({
   credentials: z.string(),

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
 import { BACKEND_URL } from '@/env';
+import { useAuth } from '@/providers/AuthProvider';
 
 interface Address {
   houseNumber?: string;
@@ -52,10 +53,12 @@ const AddTherapist = () => {
   });
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
 
+  const { getToken } = useAuth();
+
   useEffect(() => {
     const fetchHospitals = async () => {
       try {
-        const res = await fetch(`${BACKEND_URL}/api/v1/hospitals?page=1&limit=100`);
+        const res = await fetch(`${BACKEND_URL}/api/v1/hospitals?page=1&limit=100`, {});
         if (res.ok) {
           const resData = await res.json();
           setHospitals(resData.data);
@@ -101,10 +104,12 @@ const AddTherapist = () => {
     console.log('Form data:', formData);
 
     try {
+      const token = getToken();
       const res = await fetch(`${BACKEND_URL}/api/v1/therapists`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });

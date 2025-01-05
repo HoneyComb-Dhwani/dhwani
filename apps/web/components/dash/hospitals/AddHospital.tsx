@@ -5,6 +5,7 @@ import type { Hospital } from '@/types/hospitals';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
 import { BACKEND_URL } from '@/env';
+import { useAuth } from '@/providers/AuthProvider';
 
 const AddHospital = () => {
   const [formData, setFormData] = useState<Hospital>({
@@ -18,10 +19,12 @@ const AddHospital = () => {
       country: '',
       postalCode: '',
     },
-    phoneNumber: 0,
+    phoneNumber: '',
     code: '',
     email: '',
   });
+
+  const { getToken } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -40,7 +43,7 @@ const AddHospital = () => {
     } else {
       setFormData((prev) => ({
         ...prev,
-        [name as keyof Hospital]: name === 'phoneNumber' ? Number(value) : value,
+        [name as keyof Hospital]: name === 'phoneNumber' ? String(value) : value,
       }));
     }
   };
@@ -49,10 +52,12 @@ const AddHospital = () => {
     e.preventDefault();
 
     try {
+      const token = getToken();
       const res = await fetch(`${BACKEND_URL}/api/v1/hospitals`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
@@ -100,7 +105,7 @@ const AddHospital = () => {
             />
             <Input
               label="Phone Number"
-              type="number"
+              type="text"
               placeholder="Enter phone number"
               value={formData.phoneNumber.toString()}
               onChange={(e) => handleChange({ ...e, target: { ...e.target, name: 'phoneNumber' } })}
