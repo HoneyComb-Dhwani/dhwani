@@ -73,6 +73,18 @@ export class ConsultationsController {
     return this.consultationsService.fetchConsultationById(consultationId);
   }
 
+  @UseGuards(AuthGuard)
+  @Get('/patient/user')
+  async fetchUserConsultations(@Req() req) {
+    const userId = req.user.id;
+
+    if (!userId) {
+      return errors.UNAUTHORIZED;
+    }
+
+    return this.consultationsService.fetchUserConsultations(userId);
+  }
+
   @Put('/:consultationId')
   async updateConsultation(
     @Param('consultationId') consultationId: ULID,

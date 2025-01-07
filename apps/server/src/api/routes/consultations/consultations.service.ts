@@ -216,6 +216,37 @@ export class ConsultationsService {
     };
   }
 
+  async fetchUserConsultations(userId: ULID): Promise<ReturnResponse | ReturnError> {
+    const cacheKey = `consultations:user:${userId}`;
+    const cachedData = await this.redisClient.get(cacheKey);
+
+    if (cachedData) {
+      return {
+        status: 200,
+        message: 'OK',
+        prettyMessage: 'Consultations fetched successfully',
+        data: JSON.parse(cachedData),
+      };
+    }
+
+    const consultations = await consultationsRepository.fetchUserConsultations(userId);
+
+    if (consultations.length === 0) {
+      return errors.NO_DATA_FOUND;
+    }
+
+    if (consultations && consultations.length > 0) {
+      await this.redisClient.set(cacheKey, JSON.stringify(consultations));
+    }
+
+    return {
+      status: 200,
+      message: 'OK',
+      prettyMessage: 'Consultations fetched successfully',
+      data: consultations,
+    };
+  }
+
   async updateConsultation(
     id: ULID,
     consultationData: NewConsultation,

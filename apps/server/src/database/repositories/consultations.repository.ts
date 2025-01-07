@@ -151,6 +151,47 @@ export class ConsultationsRepository {
     return consultation ?? null;
   }
 
+  async fetchUserConsultations(userId: ULID) {
+    const result = db
+      .select({
+        id: consultations.id,
+        diagnosis: consultations.diagnosis,
+        status: consultations.status,
+        treatmentPlan: consultations.treatmentPlan,
+        finalReportUrl: consultations.finalReportUrl,
+        details: {
+          firstName: patients.firstName,
+          middleName: patients.middleName,
+          lastName: patients.lastName,
+          email: patients.email,
+          phoneNumber: patients.phoneNumber,
+          dateOfBirth: patients.dateOfBirth,
+        },
+        therapist: {
+          id: therapists.id,
+          firstName: therapists.firstName,
+          middleName: therapists.middleName,
+          lastName: therapists.lastName,
+          email: therapists.email,
+        },
+        hospital: {
+          id: hospitals.id,
+          name: hospitals.name,
+          email: hospitals.email,
+          phoneNumber: hospitals.phoneNumber,
+        },
+        createdAt: consultations.createdAt,
+      })
+      .from(consultations)
+      .leftJoin(patients, eq(consultations.patientId, patients.id))
+      .leftJoin(therapists, eq(consultations.therapistId, therapists.id))
+      .leftJoin(hospitals, eq(patients.hospitalId, hospitals.id))
+      .leftJoin(addresses, eq(patients.addressId, addresses.id))
+      .where(and(eq(consultations.isDeleted, false), eq(patients.userId, userId)));
+
+    return result ?? null;
+  }
+
   async updateConsultation(
     id: ULID,
     updatedData: Partial<Omit<Consultation, 'id'>>,
