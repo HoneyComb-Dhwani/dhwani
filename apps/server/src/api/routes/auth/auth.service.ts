@@ -7,6 +7,7 @@ import { errors, type ReturnError, type ReturnResponse } from '../../constants';
 import { userRepository } from 'src/database/repositories/user.repository';
 import { supervisorRepository } from 'src/database/repositories/supervisor.repository';
 import { therapistRepository } from 'src/database/repositories/therapist.repository';
+import { env } from 'src/config';
 
 @Injectable()
 export class AuthService {
@@ -64,7 +65,7 @@ export class AuthService {
         return errors.INVALID_CREDENTIALS;
       }
 
-      await this.redisClient.setEx(`user:${email}`, 3600, JSON.stringify(user));
+      await this.redisClient.setEx(`user:${email}`, env.cacheDuration, JSON.stringify(user));
     }
 
     const token = signJwt({
@@ -112,7 +113,7 @@ export class AuthService {
         return errors.INVALID_CREDENTIALS;
       }
 
-      await this.redisClient.setEx(workerCacheKey, 3600, JSON.stringify(worker));
+      await this.redisClient.setEx(workerCacheKey, env.cacheDuration, JSON.stringify(worker));
     }
 
     const isValidPassword = await comparePassword(password, worker.userHashPassword);

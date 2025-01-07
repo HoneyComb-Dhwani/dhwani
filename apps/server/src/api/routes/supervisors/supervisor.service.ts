@@ -4,6 +4,7 @@ import type { NewSupervisor } from 'src/database';
 import { errors, type ReturnError, type ReturnResponse } from '../../constants';
 import { Inject, Injectable } from '@nestjs/common';
 import { supervisorRepository } from 'src/database/repositories/supervisor.repository';
+import { env } from 'src/config';
 
 @Injectable()
 export class SupervisorService {
@@ -49,7 +50,7 @@ export class SupervisorService {
 
     if (supervisors) {
       await this.redisClient.set(cacheKey, JSON.stringify(supervisors), {
-        EX: 60 * 5,
+        EX: env.cacheDuration,
       });
     }
 
@@ -81,7 +82,9 @@ export class SupervisorService {
     }
 
     if (supervisor) {
-      await this.redisClient.set(cacheKey, JSON.stringify(supervisor));
+      await this.redisClient.set(cacheKey, JSON.stringify(supervisor), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {

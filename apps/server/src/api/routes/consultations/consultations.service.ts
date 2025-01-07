@@ -6,6 +6,7 @@ import { errors, type ReturnResponse, type ReturnError } from '../../constants';
 import { Inject, Injectable } from '@nestjs/common';
 import { consultationsRepository } from 'src/database/repositories/consultations.repository';
 import { patientsRepository } from 'src/database/repositories/patients.repository';
+import { env } from 'src/config';
 
 @Injectable()
 export class ConsultationsService {
@@ -55,7 +56,9 @@ export class ConsultationsService {
     }
 
     if (consultations && consultations.length > 0) {
-      await this.redisClient.set(cacheKey, JSON.stringify(consultations));
+      await this.redisClient.set(cacheKey, JSON.stringify(consultations), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {
@@ -96,7 +99,9 @@ export class ConsultationsService {
     }
 
     if (consultations && consultations.length > 0) {
-      await this.redisClient.set(cacheKey, JSON.stringify(consultations));
+      await this.redisClient.set(cacheKey, JSON.stringify(consultations), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {
@@ -137,7 +142,9 @@ export class ConsultationsService {
     }
 
     if (consultations && consultations.length > 0) {
-      await this.redisClient.set(cacheKey, JSON.stringify(consultations));
+      await this.redisClient.set(cacheKey, JSON.stringify(consultations), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {
@@ -174,7 +181,9 @@ export class ConsultationsService {
     );
 
     if (consultations && consultations.length > 0) {
-      await this.redisClient.set(cacheKey, JSON.stringify(consultations));
+      await this.redisClient.set(cacheKey, JSON.stringify(consultations), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {
@@ -205,7 +214,9 @@ export class ConsultationsService {
     }
 
     if (consultation) {
-      await this.redisClient.set(cacheKey, JSON.stringify(consultation));
+      await this.redisClient.set(cacheKey, JSON.stringify(consultation), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {
@@ -236,7 +247,9 @@ export class ConsultationsService {
     }
 
     if (consultations && consultations.length > 0) {
-      await this.redisClient.set(cacheKey, JSON.stringify(consultations));
+      await this.redisClient.set(cacheKey, JSON.stringify(consultations), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {

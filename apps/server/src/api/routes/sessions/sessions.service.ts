@@ -5,6 +5,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { consultationsRepository } from 'src/database/repositories/consultations.repository';
 import { errors, ReturnError, ReturnResponse } from 'src/api/constants';
 import { sessionsRepository } from 'src/database/repositories/sessions.repository';
+import { env } from 'src/config';
 
 @Injectable()
 export class SessionsService {
@@ -57,7 +58,9 @@ export class SessionsService {
     }
 
     if (sessions) {
-      await this.redisClient.set(cacheKey, JSON.stringify(sessions));
+      await this.redisClient.set(cacheKey, JSON.stringify(sessions), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {
@@ -94,7 +97,9 @@ export class SessionsService {
     }
 
     if (sessions) {
-      await this.redisClient.set(cacheKey, JSON.stringify(sessions));
+      await this.redisClient.set(cacheKey, JSON.stringify(sessions), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {
@@ -135,7 +140,9 @@ export class SessionsService {
     }
 
     if (sessions) {
-      await this.redisClient.set(cacheKey, JSON.stringify(sessions));
+      await this.redisClient.set(cacheKey, JSON.stringify(sessions), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {
@@ -166,7 +173,9 @@ export class SessionsService {
     }
 
     if (session) {
-      await this.redisClient.set(cacheKey, JSON.stringify(session));
+      await this.redisClient.set(cacheKey, JSON.stringify(session), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {

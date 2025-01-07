@@ -5,6 +5,7 @@ import { errors } from '../constants';
 import { JwtPayload } from 'jsonwebtoken';
 import { verifyJwt } from './jwt.utils';
 import { userRepository } from 'src/database/repositories/user.repository';
+import { env } from 'src/config';
 
 export const checkAuth = async (
   context: ExecutionContext,
@@ -41,7 +42,7 @@ export const checkAuth = async (
         throw new NotFoundException(errors.NOT_FOUND);
       }
 
-      await redisClient.setEx(`user:${decoded.userId}`, 3600, JSON.stringify(user));
+      await redisClient.setEx(`user:${decoded.userId}`, env.cacheDuration, JSON.stringify(user));
     }
 
     request.user = user;

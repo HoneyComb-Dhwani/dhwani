@@ -6,6 +6,7 @@ import { hospitalRepository } from 'src/database/repositories/hospital.repositor
 import { ULID } from 'ULID';
 import { CreateHospitalDto } from './dto';
 import { addressRepository } from 'src/database/repositories/address.repository';
+import { env } from 'src/config';
 
 @Injectable()
 export class HospitalService {
@@ -60,7 +61,7 @@ export class HospitalService {
 
     if (hospitals) {
       await this.redisClient.set(cacheKey, JSON.stringify(hospitals), {
-        EX: 60 * 5,
+        EX: env.cacheDuration,
       });
     }
 
@@ -92,7 +93,9 @@ export class HospitalService {
     }
 
     if (hospital) {
-      await this.redisClient.set(cacheKey, JSON.stringify(hospital));
+      await this.redisClient.set(cacheKey, JSON.stringify(hospital), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {
