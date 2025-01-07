@@ -5,6 +5,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { errors, type ReturnError, type ReturnResponse } from '../../constants';
 import { therapistRepository } from 'src/database/repositories/therapist.repository';
 import { CreateTherapistDto } from './dto';
+import { env } from 'src/config';
 
 @Injectable()
 export class TherapistsService {
@@ -47,7 +48,7 @@ export class TherapistsService {
 
     if (therapists.length !== 0) {
       this.redisClient.set(cacheKey, JSON.stringify(therapists), {
-        EX: 60 * 5,
+        EX: env.cacheDuration,
       });
     }
 
@@ -90,7 +91,7 @@ export class TherapistsService {
 
     if (therapists.length !== 0) {
       this.redisClient.set(cacheKey, JSON.stringify(therapists), {
-        EX: 60 * 5,
+        EX: env.cacheDuration,
       });
     }
 

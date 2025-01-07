@@ -4,6 +4,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { NewPatient } from 'src/database';
 import { errors, ReturnError, ReturnResponse } from 'src/api/constants';
 import { patientsRepository } from 'src/database/repositories/patients.repository';
+import { env } from 'src/config';
 
 @Injectable()
 export class PatientsService {
@@ -45,7 +46,9 @@ export class PatientsService {
     }
 
     if (patients.length > 0) {
-      await this.redisClient.set(cacheKey, JSON.stringify(patients));
+      await this.redisClient.set(cacheKey, JSON.stringify(patients), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {
@@ -76,7 +79,9 @@ export class PatientsService {
     }
 
     if (patient) {
-      await this.redisClient.set(cacheKey, JSON.stringify(patient));
+      await this.redisClient.set(cacheKey, JSON.stringify(patient), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {
@@ -109,7 +114,9 @@ export class PatientsService {
     }
 
     if (patients.length > 0) {
-      await this.redisClient.set(cacheKey, JSON.stringify(patients));
+      await this.redisClient.set(cacheKey, JSON.stringify(patients), {
+        EX: env.cacheDuration,
+      });
     }
 
     return {

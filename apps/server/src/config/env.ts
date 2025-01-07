@@ -24,6 +24,7 @@ const envSchema = z.object({
   AWS_SECRET_ACCESS_KEY: z.string({
     required_error: 'AWS_SECRET_ACCESS_KEY is required',
   }),
+  CACHE_DURATION: z.string().default('3600'),
 });
 
 const parseEnv = envSchema.safeParse(process.env);
@@ -41,4 +42,5 @@ export const env = {
   awsRegion: parseEnv.data.AWS_REGION,
   awsAccessKeyId: parseEnv.data.AWS_ACCESS_KEY_ID,
   awsSecretAccessKey: parseEnv.data.AWS_SECRET_ACCESS_KEY,
+  cacheDuration: parseInt(parseEnv.data.CACHE_DURATION, 10),
 } as const;
