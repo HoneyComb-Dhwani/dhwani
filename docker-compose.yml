@@ -3,15 +3,15 @@ services:
     container_name: localstack
     image: localstack/localstack:latest
     ports:
-      - "127.0.0.1:4566:4566"
+      - '127.0.0.1:4566:4566'
     volumes:
-      - "./localstack_volume:/var/lib/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - './localstack_volume:/var/lib/localstack'
+      - '/var/run/docker.sock:/var/run/docker.sock'
     environment:
       - SERVICES=s3,sns
       - DEBUG=1
       - DATA_DIR=/tmp/localstack/data
-  
+
   postgres:
     container_name: postgres
     image: postgres
@@ -32,26 +32,26 @@ services:
     ports:
       - '6379:6379'
     command: redis-server --save 20 1 --loglevel warning
-    volumes: 
+    volumes:
       - redis_cache:/data
 
   frontend:
     build:
-      context: ./client
+      context: ./apps/web
       dockerfile: Dockerfile
     container_name: dhwani_frontend
     restart: always
     ports:
-      - "3000:3000"
+      - '3000:3000'
 
   backend:
     build:
-      context: ./server
+      context: ./apps/server
       dockerfile: Dockerfile
     container_name: dhwani_backend
     restart: always
     ports:
-      - "8000:8000"
+      - '8000:8000'
     depends_on:
       - postgres
       - redis

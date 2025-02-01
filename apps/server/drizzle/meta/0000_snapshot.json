@@ -175,12 +175,8 @@
           "name": "consultations_patient_id_patients_id_fk",
           "tableFrom": "consultations",
           "tableTo": "patients",
-          "columnsFrom": [
-            "patient_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["patient_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -188,12 +184,8 @@
           "name": "consultations_therapist_id_therapists_id_fk",
           "tableFrom": "consultations",
           "tableTo": "therapists",
-          "columnsFrom": [
-            "therapist_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["therapist_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -278,12 +270,8 @@
           "name": "hospitals_address_id_addresses_id_fk",
           "tableFrom": "hospitals",
           "tableTo": "addresses",
-          "columnsFrom": [
-            "address_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["address_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -364,9 +352,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -490,12 +476,8 @@
           "name": "patients_user_id_users_id_fk",
           "tableFrom": "patients",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -503,12 +485,8 @@
           "name": "patients_address_id_addresses_id_fk",
           "tableFrom": "patients",
           "tableTo": "addresses",
-          "columnsFrom": [
-            "address_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["address_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -516,12 +494,8 @@
           "name": "patients_hospital_id_hospitals_id_fk",
           "tableFrom": "patients",
           "tableTo": "hospitals",
-          "columnsFrom": [
-            "hospital_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["hospital_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -531,9 +505,7 @@
         "patients_email_unique": {
           "name": "patients_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -638,12 +610,8 @@
           "name": "therapists_user_id_users_id_fk",
           "tableFrom": "therapists",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -651,12 +619,8 @@
           "name": "therapists_address_id_addresses_id_fk",
           "tableFrom": "therapists",
           "tableTo": "addresses",
-          "columnsFrom": [
-            "address_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["address_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -664,12 +628,8 @@
           "name": "therapists_hospital_id_hospitals_id_fk",
           "tableFrom": "therapists",
           "tableTo": "hospitals",
-          "columnsFrom": [
-            "hospital_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["hospital_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -742,12 +702,8 @@
           "name": "supervisors_user_id_users_id_fk",
           "tableFrom": "supervisors",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -755,12 +711,8 @@
           "name": "supervisors_hospital_id_hospitals_id_fk",
           "tableFrom": "supervisors",
           "tableTo": "hospitals",
-          "columnsFrom": [
-            "hospital_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["hospital_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -845,12 +797,8 @@
           "name": "sessions_patient_id_patients_id_fk",
           "tableFrom": "sessions",
           "tableTo": "patients",
-          "columnsFrom": [
-            "patient_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["patient_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -858,12 +806,8 @@
           "name": "sessions_therapist_id_therapists_id_fk",
           "tableFrom": "sessions",
           "tableTo": "therapists",
-          "columnsFrom": [
-            "therapist_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["therapist_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -871,12 +815,8 @@
           "name": "sessions_consultation_id_consultations_id_fk",
           "tableFrom": "sessions",
           "tableTo": "consultations",
-          "columnsFrom": [
-            "consultation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["consultation_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -892,30 +832,17 @@
     "public.status": {
       "name": "status",
       "schema": "public",
-      "values": [
-        "pending",
-        "completed",
-        "cancelled"
-      ]
+      "values": ["pending", "completed", "cancelled"]
     },
     "public.roleEnums": {
       "name": "roleEnums",
       "schema": "public",
-      "values": [
-        "USER",
-        "THERAPIST",
-        "SUPERVISOR",
-        "ADMIN"
-      ]
+      "values": ["USER", "THERAPIST", "SUPERVISOR", "ADMIN"]
     },
     "public.genderEnum": {
       "name": "genderEnum",
       "schema": "public",
-      "values": [
-        "Male",
-        "Female",
-        "Other"
-      ]
+      "values": ["Male", "Female", "Other"]
     }
   },
   "schemas": {},
