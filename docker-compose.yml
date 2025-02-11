@@ -35,29 +35,29 @@ services:
     volumes:
       - redis_cache:/data
 
-  frontend:
-    build:
-      context: ./apps/web
-      dockerfile: Dockerfile
-    container_name: dhwani_frontend
-    restart: always
-    ports:
-      - '3000:3000'
+  # frontend:
+  #   build:
+  #     context: ./apps/web
+  #     dockerfile: Dockerfile
+  #   container_name: dhwani_frontend
+  #   restart: always
+  #   ports:
+  #     - '3000:3000'
 
-  backend:
-    build:
-      context: ./apps/server
-      dockerfile: Dockerfile
-    container_name: dhwani_backend
-    restart: always
-    ports:
-      - '8000:8000'
-    depends_on:
-      - postgres
-      - redis
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
-      - REDIS_URL=redis://redis:6379/0
+  # backend:
+  #   build:
+  #     context: ./apps/server
+  #     dockerfile: Dockerfile
+  #   container_name: dhwani_backend
+  #   restart: always
+  #   ports:
+  #     - '8000:8000'
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #   environment:
+  #     - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+  #     - REDIS_URL=redis://redis:6379/0
 
 volumes:
   postgres_data:
